@@ -268,12 +268,10 @@ class Monitoring extends CI_Model {
 			   m.mch_type,
 			   m.mch_sub_type,
 			   m.bg_color,
-			   vn.VESSEL_NAME,
 			   v.*,
 			   NVL (TO_CHAR (v.last_placement, 'DD-MON'), 'NO-ACT') last_job
 			FROM m_machine m
 				LEFT JOIN (SELECT j.id_yard,
-					   j.id_ves_voyage,
 					   j.id_block,
 					   j.block_ blockname,
 					   j.slot_,
@@ -293,7 +291,6 @@ class Monitoring extends CI_Model {
 						   AND j.placement_date = lp.last_placement)
 				  WHERE j.id_yard = $id_yard AND j.ID_TERMINAL='".$this->gtools->terminal()."') v
 				ON (m.id_machine = v.id_machine)
-				LEFT JOIN VES_VOYAGE vn ON (v.id_ves_voyage = vn.id_ves_voyage)
 			WHERE m.mch_type = 'YARD' and m.id_machine > 0 AND m.ID_TERMINAL='".$this->gtools->terminal()."'
 			ORDER BY m.mch_name";
 		$rs 		= $this->db->query($query);
@@ -305,7 +302,6 @@ class Monitoring extends CI_Model {
 			   m.mch_type,
 			   m.mch_sub_type,
 			   m.bg_color,
-			   vn.VESSEL_NAME,
 			   v.*,
 			   NVL(TO_CHAR(v.date_entry, 'DD-MON'), 'NO-ACT') last_job
 			FROM m_machine m
@@ -320,7 +316,6 @@ class Monitoring extends CI_Model {
 				  INNER JOIN con_listcont c ON (J.NO_CONTAINER = C.NO_CONTAINER AND J.POINT=C.POINT)
 				  WHERE j.ID_TERMINAL='".$this->gtools->terminal()."') v
 			ON (m.id_machine = v.id_machine)
-			LEFT JOIN VES_VOYAGE vn ON (v.id_ves_voyage = vn.id_ves_voyage)
 			WHERE m.mch_type = 'QUAY' and m.id_machine > 0 and m.ID_TERMINAL='".$this->gtools->terminal()."'
 			ORDER BY m.mch_name";
 		$rs 		= $this->db->query($query);

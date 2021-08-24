@@ -1,0 +1,113 @@
+<?php
+header("Content-type: application/vnd.ms-excel");
+header("Content-Disposition: attachment; filename=OutboundStackingList_" . $id_ves_voyage . ".xls");
+header("Pragma: no-cache");
+header("Expires: 0");
+?>
+
+<style>
+.basic {
+	font-size: small;
+}
+</style>
+
+<table border="0">
+	<tr><td colspan="2"><?=$corporate_name?></td><td></td><td></td></tr>
+	<tr><td></td><td></td><td></td><td>Revision : 01</td></tr>
+	<tr><td></td><td></td><td></td><td>Date : <?=$date?></td></tr>
+	<tr><td>Printed by : <?=$username?></td><td></td><td></td><td>Page : 1/1</td></tr>
+	<tr><td colspan="4"></td></tr>
+	<tr><td colspan="4" align="center"><font size="12pt"><b><i>OUTBOUND STACKING LIST <?=$vsname?></i></b></font></td></tr>
+	<tr><td colspan="4"><hr></td></tr>
+	<tr>
+		<td colspan="4">
+			<table border="0">
+				<tr>
+					<td width="80">VESSEL ID</td>
+					<td width="10">:</td>
+					<td colspan="10"><?=$ves_id?></td>
+				</tr>
+				<tr>
+					<td>VOYAGE</td>
+					<td width="10">:</td>
+					<td colspan="10"><?=$voyg?></td>
+				</tr>
+				<tr>
+					<td width="80">ARRIVAL</td>
+					<td width="10">:</td>
+					<td width="100"><?=$rta?></td>
+					<td width="30"></td>
+					<td width="80">BERTHING</td>
+					<td width="10">:</td>
+					<td width="100"><?=$berth?></td>
+					<td width="30"></td>
+					<td width="80">DEPARTURE</td>
+					<td width="10">:</td>
+					<td width="100"><?=$rtd?></td>
+				</tr>
+				<tr>
+					<td width="80">START WORK</td>
+					<td width="10">:</td>
+					<td width="100"><?=$str?></td>
+					<td width="30"></td>
+					<td width="80">END WORK</td>
+					<td width="10">:</td>
+					<td width="100"><?=$end?></td>
+					<td width="30"></td> 
+					<td></td>
+					<td></td>
+					<td></td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td>&nbsp;</td>
+	</tr>
+	<TR>
+		<td colspan="4">
+		<table border="1">
+			<tr align="center" class="basic">
+				<td>NO</td>
+				<td>NO CONTAINER</td>
+				<td>ISO CODE</td>
+				<td>SIZE</td>
+				<td>TYPE</td>
+				<td>STATUS</td>
+				<td>HZ</td>
+				<td>WEIGHT</td>
+				<td>POD</td>
+				<td>BLOCK</td>
+				<td>YARD</td>
+				<td>NPE</td>
+				<td>PLAN BAY</td>
+			</tr>
+<?php
+$numrow = 1;
+foreach ($datadetail as $rowd){
+?>
+			<TR align="center">
+				<td><?=$numrow?></td>
+				<td><?=$rowd['NO_CONTAINER']?></td>
+				<td><?=$rowd['ID_ISO_CODE']?></td>
+				<td><?=$rowd['CONT_SIZE']?></td>
+				<td><?=$rowd['CONT_TYPE']?></td>
+				<td><?=$rowd['CONT_STATUS']?></td>
+				<td><?=$rowd['HAZARD']?></td>
+				<td><?=$rowd['WEIGHT']?></td>
+				<td><?=$rowd['ID_POD']?></td>
+				<td><?=$rowd['YD_BLOCK_NAME']?></td>
+				<td><?=$rowd['YARD_POS']?></td>
+				<td><?=$rowd['NPE']?></td>
+				<td></td>
+			</TR>
+<?php
+	$numrow += 1;
+}
+?>
+			<TR>
+			</TR>
+		</table>
+		</TD>
+	</TR>
+</table>

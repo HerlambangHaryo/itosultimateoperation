@@ -1,0 +1,81 @@
+<script type="text/javascript">
+	Ext.onReady(function(){
+		var ct_store = Ext.create('Ext.data.Store', {
+			fields:['NO_CONTAINER', 'POINT', 'ID_ISO_CODE', 'CONT_SIZE', 'CONT_TYPE', 'CONT_STATUS', 'HAZARD', 'WEIGHT', 'ID_POD', 'YD_BLOCK_NAME', 'YARD_POS'],
+			autoLoad: true,
+			remoteSort: true,
+			proxy: {
+				type: 'ajax',
+				url: '<?=controller_?>outbound_stacking_list/data_outbound_stacking_list',
+				reader: {
+					type: 'json',
+					root: 'data',
+					totalProperty: 'total'
+				},
+				extraParams: {
+					id_ves_voyage: '<?=$id_ves_voyage?>'
+				}
+			},
+			pageSize: 100,
+			sorters: [{
+				property: 'NO_CONTAINER',
+				direction: 'ASC'
+			}]
+		});
+		
+		var ct_filters = {
+			ftype: 'filters',
+			encode: true,
+			local: false
+		};
+		
+		var ct_grid = Ext.create('Ext.grid.Panel', {
+			store: ct_store,
+			loadMask: true,
+			width: 900,
+			height: 440,
+			columns: [
+				{ text: 'No Container', dataIndex: 'NO_CONTAINER', width: 140, filter: {type: 'string'}},
+				{ dataIndex: 'POINT', hidden: true, hideable: false},
+				{ text: 'ISO', dataIndex: 'ID_ISO_CODE' , width: 80, filter: {type: 'string'}},
+				{ text: 'Size', dataIndex: 'CONT_SIZE' , width: 80, filter: {type: 'string'}},
+				{ text: 'Type', dataIndex: 'CONT_TYPE' , width: 80, filter: {type: 'string'}},
+				{ text: 'F/M', dataIndex: 'CONT_STATUS' , width: 80, filter: {type: 'string'}},
+				{ text: 'Hazard', dataIndex: 'HAZARD' , width: 80, filter: {type: 'string'}},
+				{ text: 'WGT(Ton)', dataIndex: 'WEIGHT', width: 80, filter: {type: 'string'}},
+				{ text: 'POD', dataIndex: 'ID_POD', width: 80, filter: {type: 'string'}},
+				{ text: 'Block', dataIndex: 'YD_BLOCK_NAME', width: 80, filter: {type: 'string'}},
+				{ text: 'Yard', dataIndex: 'YARD_POS', width: 100}
+			],
+			viewConfig : {
+				enableTextSelection: true
+			},
+			dockedItems: [Ext.create('Ext.toolbar.Paging', {
+				dock: 'bottom',
+				store: ct_store,
+				displayInfo: true,
+				displayMsg: 'Displaying {0} - {1} of {2}',
+				items: [
+					'-',{
+						text: 'Clear Filter Data',
+						handler: function () {
+							ct_grid.filters.clearFilters();
+						}
+					}
+				]
+			})],
+			tbar: [{
+				itemId: 'export_to_excel_<?=$tab_id?>',
+				text: 'Export to Excel',
+				handler: function() {
+					window.open('<?=controller_?>outbound_stacking_list/export_to_excel/<?=$id_ves_voyage?>/','_blank');
+				}
+			}],
+			features: [ct_filters],
+			emptyText: 'No Data Found'
+		});
+		
+		ct_grid.render('job_list_<?=$tab_id?>');
+	});
+</script>
+<div id="job_list_<?=$tab_id?>"></div>

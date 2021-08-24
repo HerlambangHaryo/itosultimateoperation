@@ -1,0 +1,33 @@
+<?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed'); ?>
+
+ERROR - 2021-04-22 14:03:17 --> Severity: Notice  --> Undefined index: 5 C:\xampp\htdocs\itosVersioningProject\operation\application\views\templates\menu_toolbar.php 50
+ERROR - 2021-04-22 14:03:17 --> Severity: Notice  --> Undefined index: 6 C:\xampp\htdocs\itosVersioningProject\operation\application\views\templates\menu_toolbar.php 50
+ERROR - 2021-04-22 14:03:17 --> Severity: Notice  --> Undefined index: 7 C:\xampp\htdocs\itosVersioningProject\operation\application\views\templates\menu_toolbar.php 50
+ERROR - 2021-04-22 14:03:17 --> Severity: Notice  --> Undefined index: 25 C:\xampp\htdocs\itosVersioningProject\operation\application\views\templates\menu_toolbar.php 50
+ERROR - 2021-04-22 14:03:17 --> Severity: Notice  --> Undefined index: 48 C:\xampp\htdocs\itosVersioningProject\operation\application\views\templates\menu_toolbar.php 50
+ERROR - 2021-04-22 14:03:17 --> Severity: Notice  --> Undefined index: 53 C:\xampp\htdocs\itosVersioningProject\operation\application\views\templates\menu_toolbar.php 50
+ERROR - 2021-04-22 14:03:17 --> Severity: Notice  --> Undefined index: 79 C:\xampp\htdocs\itosVersioningProject\operation\application\views\templates\menu_toolbar.php 50
+ERROR - 2021-04-22 14:03:17 --> Severity: Notice  --> Undefined index: 83 C:\xampp\htdocs\itosVersioningProject\operation\application\views\templates\menu_toolbar.php 50
+ERROR - 2021-04-22 14:03:17 --> Severity: Notice  --> Undefined index: 97 C:\xampp\htdocs\itosVersioningProject\operation\application\views\templates\menu_toolbar.php 50
+ERROR - 2021-04-22 14:03:17 --> Severity: Notice  --> Undefined index: 84 C:\xampp\htdocs\itosVersioningProject\operation\application\views\templates\menu_toolbar.php 50
+ERROR - 2021-04-22 14:03:17 --> Severity: Notice  --> Undefined index: 85 C:\xampp\htdocs\itosVersioningProject\operation\application\views\templates\menu_toolbar.php 50
+ERROR - 2021-04-22 14:03:17 --> Severity: Notice  --> Undefined index: 27 C:\xampp\htdocs\itosVersioningProject\operation\application\views\templates\menu_toolbar.php 50
+ERROR - 2021-04-22 14:03:17 --> Severity: Notice  --> Undefined index: 28 C:\xampp\htdocs\itosVersioningProject\operation\application\views\templates\menu_toolbar.php 50
+ERROR - 2021-04-22 14:03:17 --> Severity: Notice  --> Undefined index: 29 C:\xampp\htdocs\itosVersioningProject\operation\application\views\templates\menu_toolbar.php 50
+ERROR - 2021-04-22 14:03:17 --> Severity: Notice  --> Undefined index: 66 C:\xampp\htdocs\itosVersioningProject\operation\application\views\templates\menu_toolbar.php 50
+ERROR - 2021-04-22 14:03:17 --> Severity: Notice  --> Undefined index: 100 C:\xampp\htdocs\itosVersioningProject\operation\application\views\templates\menu_toolbar.php 50
+ERROR - 2021-04-22 14:03:17 --> Severity: Notice  --> Undefined index: 35 C:\xampp\htdocs\itosVersioningProject\operation\application\views\templates\menu_toolbar.php 50
+ERROR - 2021-04-22 14:03:17 --> Severity: Notice  --> Undefined index: 80 C:\xampp\htdocs\itosVersioningProject\operation\application\views\templates\menu_toolbar.php 50
+ERROR - 2021-04-22 14:03:17 --> Severity: Notice  --> Undefined index: 32 C:\xampp\htdocs\itosVersioningProject\operation\application\views\templates\menu_toolbar.php 50
+ERROR - 2021-04-22 14:03:17 --> Severity: Notice  --> Undefined index: 90 C:\xampp\htdocs\itosVersioningProject\operation\application\views\templates\menu_toolbar.php 50
+ERROR - 2021-04-22 14:03:17 --> Severity: Notice  --> Undefined index: 70 C:\xampp\htdocs\itosVersioningProject\operation\application\views\templates\menu_toolbar.php 50
+ERROR - 2021-04-22 14:03:17 --> Severity: Notice  --> Undefined index: 71 C:\xampp\htdocs\itosVersioningProject\operation\application\views\templates\menu_toolbar.php 50
+ERROR - 2021-04-22 14:03:17 --> Severity: Notice  --> Undefined index: 72 C:\xampp\htdocs\itosVersioningProject\operation\application\views\templates\menu_toolbar.php 50
+ERROR - 2021-04-22 14:03:17 --> Severity: Notice  --> Undefined index: 73 C:\xampp\htdocs\itosVersioningProject\operation\application\views\templates\menu_toolbar.php 50
+ERROR - 2021-04-22 14:03:17 --> Severity: Notice  --> Undefined index: 74 C:\xampp\htdocs\itosVersioningProject\operation\application\views\templates\menu_toolbar.php 50
+ERROR - 2021-04-22 14:03:17 --> Severity: Notice  --> Undefined index: 77 C:\xampp\htdocs\itosVersioningProject\operation\application\views\templates\menu_toolbar.php 50
+ERROR - 2021-04-22 14:03:17 --> Severity: Notice  --> Undefined index: 81 C:\xampp\htdocs\itosVersioningProject\operation\application\views\templates\menu_toolbar.php 50
+ERROR - 2021-04-22 14:03:17 --> Severity: Notice  --> Undefined index: 98 C:\xampp\htdocs\itosVersioningProject\operation\application\views\templates\menu_toolbar.php 50
+ERROR - 2021-04-22 14:03:17 --> Severity: Notice  --> Undefined index: 99 C:\xampp\htdocs\itosVersioningProject\operation\application\views\templates\menu_toolbar.php 50
+ERROR - 2021-04-22 14:03:17 --> Severity: Notice  --> Undefined index: 55 C:\xampp\htdocs\itosVersioningProject\operation\application\views\templates\menu_toolbar.php 50
+ERROR - 2021-04-22 14:03:17 --> Severity: Notice  --> Undefined variable: data C:\xampp\htdocs\itosVersioningProject\operation\application\controllers\main.php 41

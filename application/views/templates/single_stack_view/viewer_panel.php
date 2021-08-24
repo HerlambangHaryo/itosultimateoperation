@@ -1,6 +1,6 @@
 <script>
-	var url
 
+	var url
 	$(function() {
 		$("#list_yard_<?=$tab_id?>").change(function() {
 			$('#list_block_<?=$tab_id?>').find('option').remove();
@@ -43,7 +43,7 @@
 			}else{
 				$('.refreshsinglestackview').hide();
 			}
-		});	
+		});
 		
 		if ($('.x-tab-inner.x-tab-inner-center:contains("-<?=$id_ves_voyage?>-<?=$slot?>-")').length > 0) {
 			$('.x-tab-inner.x-tab-inner-center:contains("-<?=$id_ves_voyage?>-<?=$slot?>-")').text(function () {
@@ -70,83 +70,81 @@
 		}else{
 			$('.refreshsinglestackview').hide();
 		}
-		console.log('ini slot',$("#list_slot_<?=$tab_id?>").val());
 	});
 
-	function loadSingleStackView(){
-	    loadmask.show();
-	    var isRelocOn = $('#OnOffRelocation_<?=$tab_id?>').is(':checked') ? 1 : 0;
-	    Ext.getCmp("<?=$tab_id?>").getLoader().load({
-		    url: '<?=controller_?>single_stack_view/index/'+$("#list_yard_<?=$tab_id?>").val()+'/'+$("#list_block_<?=$tab_id?>").val()+'/'+$("#list_slot_<?=$tab_id?>").val()+'?tab_id=<?=$tab_id?>&isRelocOn='+isRelocOn,
-		    scripts: true,
-		    contentType: 'html',
-		    autoLoad: true,
-		    success: function(){
-			    loadmask.hide();
-		    }
-	    });
-	}
-			
-	function nextPrev_onClick_<?=$tab_id?>(act){
-	    var slot = $("#list_slot_<?=$tab_id?>").val();
-	    var max_slot = $("#list_slot_<?=$tab_id?> option").length - 1;
-	    
-	    console.log('slot : ' + slot);
-	    console.log('max_slot : ' + max_slot);
-	    
-	    if(act == 'p'){
-		if(slot != '-' && slot > 1){
-		    slot--;
-		}
-	    }else{
-		if(slot == '-' && max_slot > 0){
-		    slot = 1;
-		}else if(slot < max_slot){
-		    slot++;
-		}
+function loadSingleStackView(){
+    loadmask.show();
+    var isRelocOn = $('#OnOffRelocation_<?=$tab_id?>').is(':checked') ? 1 : 0;
+    Ext.getCmp("<?=$tab_id?>").getLoader().load({
+	    url: '<?=controller_?>single_stack_view/index/'+$("#list_yard_<?=$tab_id?>").val()+'/'+$("#list_block_<?=$tab_id?>").val()+'/'+$("#list_slot_<?=$tab_id?>").val()+'?tab_id=<?=$tab_id?>&isRelocOn='+isRelocOn,
+	    scripts: true,
+	    contentType: 'html',
+	    autoLoad: true,
+	    success: function(){
+		    loadmask.hide();
 	    }
-	    $("#list_slot_<?=$tab_id?>").val(slot);
-	    loadSingleStackView();
-	    
+    });
+}
+		
+function nextPrev_onClick_<?=$tab_id?>(act){
+    var slot = $("#list_slot_<?=$tab_id?>").val();
+    var max_slot = $("#list_slot_<?=$tab_id?> option").length - 1;
+    
+    console.log('slot : ' + slot);
+    console.log('max_slot : ' + max_slot);
+    
+    if(act == 'p'){
+	if(slot != '-' && slot > 1){
+	    slot--;
 	}
+    }else{
+	if(slot == '-' && max_slot > 0){
+	    slot = 1;
+	}else if(slot < max_slot){
+	    slot++;
+	}
+    }
+    $("#list_slot_<?=$tab_id?>").val(slot);
+    loadSingleStackView();
+    
+}
 
-	function save_no_work_area(row_from,row_to,tier_from,tier_to,remarks){
+function save_no_work_area(row_from,row_to,tier_from,tier_to,remarks){
+    
+    var url = "<?=controller_?>single_stack_view/save_void";
+    $.ajax({
+	type: "POST",
+	url: url,
+	data: {
+	    'row_from' : row_from,
+	    'row_to' : row_to,
+	    'tier_from' : tier_from,
+	    'tier_to' : tier_to,	    
+	    'remarks' : remarks,	    
+	    'yard' : '<?=$id_yard?>',	    
+	    'block' : '<?=$id_block?>',	    
+	    'slot' : '<?=$slot?>'	    
+	},
+	success: function (result) {
+	    if(result == 1){
+		loadmask.show();
+		Ext.getCmp("<?=$tab_id?>").getLoader().load({
+			url: '<?=controller_?>single_stack_view/index/'+$("#list_yard_<?=$tab_id?>").val()+'/'+$("#list_block_<?=$tab_id?>").val()+'/'+$("#list_slot_<?=$tab_id?>").val()+'?tab_id=<?=$tab_id?>',
+			scripts: true,
+			contentType: 'html',
+			autoLoad: true,
+			success: function(){
+				loadmask.hide();
+			}
+		});
+	    }else{
+		alert('Set No Work Area Failed');
+	    }
 	    
-	    var url = "<?=controller_?>single_stack_view/save_void";
-	    $.ajax({
-		type: "POST",
-		url: url,
-		data: {
-		    'row_from' : row_from,
-		    'row_to' : row_to,
-		    'tier_from' : tier_from,
-		    'tier_to' : tier_to,	    
-		    'remarks' : remarks,	    
-		    'yard' : '<?=$id_yard?>',	    
-		    'block' : '<?=$id_block?>',	    
-		    'slot' : '<?=$slot?>'	    
-		},
-		success: function (result) {
-		    if(result == 1){
-			loadmask.show();
-			Ext.getCmp("<?=$tab_id?>").getLoader().load({
-				url: '<?=controller_?>single_stack_view/index/'+$("#list_yard_<?=$tab_id?>").val()+'/'+$("#list_block_<?=$tab_id?>").val()+'/'+$("#list_slot_<?=$tab_id?>").val()+'?tab_id=<?=$tab_id?>',
-				scripts: true,
-				contentType: 'html',
-				autoLoad: true,
-				success: function(){
-					loadmask.hide();
-				}
-			});
-		    }else{
-			alert('Set No Work Area Failed');
-		    }
-		    
-		}
-	    });
 	}
+    });
+}
 </script>
-
 <div id="stack_viewer_header_<?=$tab_id?>" class="sendiriStyle4">
 	<table>
 		<tr>

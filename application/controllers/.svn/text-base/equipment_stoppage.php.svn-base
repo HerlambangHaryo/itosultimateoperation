@@ -1,0 +1,87 @@
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+
+session_start();
+
+class Equipment_stoppage extends CI_Controller {
+	public function __construct(){
+		parent::__construct();
+		$this->load->helper(array('general_helper','url','form'));
+		$this->load->library('form_validation');
+		$this->load->model('master');
+		$this->load->model('gtools');
+		$this->load->library('session');
+	}
+	
+	public function index(){
+		$data['tab_id'] = $_GET['tab_id'];
+		$this->load->view('templates/equipment_stoppage_master/vw_stoppage_grid', $data);
+	}
+	
+	//filter paging short
+	public function data_stoppages(){
+		$paging = array(
+			'page'=>$_REQUEST['page'],
+			'start'=>$_REQUEST['start'],
+			'limit'=>$_REQUEST['limit']
+		);
+		$sort = isset($_REQUEST['sort'])   ? json_decode($_REQUEST['sort'])   : false;
+		$filters = isset($_REQUEST['filter']) ? json_decode($_REQUEST['filter']) : false;
+		
+		$retval = $this->master->get_stoppages($paging, $sort, $filters);
+		echo json_encode($retval);
+	}
+	
+	public function form_addStoppage(){
+		$data['tab_id'] = $_GET['tab_id'];
+		$this->load->view('templates/equipment_stoppage_master/vw_stoppage_formAdd', $data);
+	}
+
+	public function form_editStoppage(){
+		$data['tab_id'] = $_GET['tab_id'];
+		$data['id_suspend'] = $id_suspend = $_POST['id_suspend'];
+		$data['suspend']    = $this->master->get_stoppage_by_id($id_suspend);
+//		echo '<pre>';print_r($data['truck']);echo '</pre>';exit;
+		$this->load->view('templates/equipment_stoppage_master/vw_stoppage_formEdit', $data);
+	}
+	
+	public function check_stoppage(){
+		$activity = $_POST['activity'];
+		$retval = $this->master->check_suspend_activity($activity);
+		echo $retval;
+	}
+	
+	public function save_stoppage(){
+
+		$data['CREATE_USER'] 	= $this->session->userdata('id_user');
+		$data['ACTIVITY']	= trim($_POST['ACTIVITY']);
+		$data['EQ_TYPE']	= trim($_POST['EQ_TYPE']);
+		
+		$response = $this->master->save_stoppage($data);
+		
+		header('Content-Type: application/json');
+//		echo '<pre>';print_r($response);echo '</pre>';exit;
+		echo json_encode($response);
+	}
+
+	public function edit_stoppage()
+	{
+	    $data['MODIFY_USER'] = $this->session->userdata('id_user');
+	    $data['ID_SUSPEND'] = trim($_POST['ID_SUSPEND']);
+	    $data['ACTIVITY'] 	= trim($_POST['ACTIVITY']);
+	    $data['EQ_TYPE'] 	= trim($_POST['EQ_TYPE']);
+	    
+	    $response = $this->master->edit_stoppage($data);
+
+	    header('Content-Type: application/json');
+	    echo json_encode($response);
+	}
+	
+	public function delete_stoppage(){
+	    $id_suspend 	= strtoupper(trim($_POST['ID_SUSPEND']));
+	    $activity = strtoupper(trim($_POST['ACTIVITY']));
+	    $response = $this->master->delete_stoppage($id_suspend,$activity);
+
+	    header('Content-Type: application/json');
+	    echo json_encode($response);
+	}
+}

@@ -211,15 +211,7 @@ class Vessel extends CI_Model {
 		return $rs->result_array();
 	}
 
-	public function get_vessel_berthing_monitoring($ves){
-		
-		$piece_of_query = "";
-		
-		if(!empty($ves) and $ves != '-')
-		{
-			$piece_of_query .= " AND vv.ID_VES_VOYAGE = '$ves'";
-		}
-		
+	public function get_vessel_berthing_monitoring(){
 		$query = "SELECT vv.ACTIVE, vv.ALONG_SIDE, vv.ATA,
 				vv.ATB, vv.ATD, vv.BOOKING_STACK,
 				vv.CUTOFF_DATE, vv.CUTOFF_DOC_DATE,
@@ -238,7 +230,6 @@ class Vessel extends CI_Model {
 				   AND (vv.atd IS NULL OR vv.atd >= SYSDATE)
 				   AND vv.ID_TERMINAL = '".$this->gtools->terminal()."'
 				   --AND VV.ACTIVE != 'N'
-				   $piece_of_query
 			ORDER BY ATA DESC";
 		$rs = $this->db->query($query);
 		$data = $rs->result_array();
@@ -537,7 +528,6 @@ class Vessel extends CI_Model {
 										$qSort) A
 									) B
 						$qPaging";
-			
 			// print $query;
 			$rs = $this->db->query($query);
 			$vessel_voyage = $rs->result_array();
@@ -1680,7 +1670,7 @@ class Vessel extends CI_Model {
 			$param = array($id_ves_voyage, $id_vessel, $id_bay, $pos);
 
 			//debux($param);die;
-			$query = "SELECT CONT_TYPE, B.*, A.BAY, A.JML_ROW, C.NO_CONTAINER, C.POINT, C.ID_CLASS_CODE, C.CONT_SIZE, C.ID_COMMODITY, D.SEQUENCE, D.STATUS, DECODE(A.BAY,C.VS_BAY-1,'FORE',C.VS_BAY+1,'AFTER','') CONT_40_LOCATION,C.TL_FLAG,E.FOREGROUND_COLOR,E.BACKGROUND_COLOR,C.ID_COMMODITY,C.HAZARD, ROUND( C.WEIGHT / 1000 ) WEIGHT, C.ID_OPERATOR,C.ID_POD 
+			$query = "SELECT B.*, A.BAY, A.JML_ROW, C.NO_CONTAINER, C.POINT, C.ID_CLASS_CODE, C.CONT_SIZE, C.ID_COMMODITY, D.SEQUENCE, D.STATUS, DECODE(A.BAY,C.VS_BAY-1,'FORE',C.VS_BAY+1,'AFTER','') CONT_40_LOCATION,C.TL_FLAG,E.FOREGROUND_COLOR,E.BACKGROUND_COLOR,C.ID_COMMODITY,C.HAZARD, ROUND( C.WEIGHT / 1000 ) WEIGHT, C.ID_OPERATOR,C.ID_POD 
 						FROM
 							M_VESSEL_PROFILE_CELL B
 							LEFT JOIN M_VESSEL_PROFILE_BAY A
@@ -1699,7 +1689,7 @@ class Vessel extends CI_Model {
 							$qWhere
 							) AND C.VS_ROW = B.ROW_ AND C.VS_TIER = B.TIER_ ";
 			$query .= "			LEFT JOIN CON_INBOUND_SEQUENCE D
-							ON D.NO_CONTAINER = C.NO_CONTAINER AND D.POINT = C.POINT AND D.ID_VES_VOYAGE = C.ID_VES_VOYAGE
+							ON D.NO_CONTAINER = C.NO_CONTAINER AND D.POINT = C.POINT
 							LEFT JOIN M_PORT E
 							ON C.ID_POD = E.PORT_CODE
 						WHERE B.STATUS_STACK <> 'N' AND A.ID_VESSEL = ? AND A.ID_BAY = ? AND B.POSISI_STACK = ? $addWhere
@@ -1712,7 +1702,7 @@ class Vessel extends CI_Model {
 			// var_dump($param);
 			$query = "SELECT B.*, A.BAY, A.JML_ROW, C.NO_CONTAINER, C.POINT, C.ID_CLASS_CODE,C.ID_ISO_CODE, C.CONT_SIZE, C.CONT_TYPE, C.CONT_HEIGHT, C.SEQUENCE, C.HAS_JOB_SHIFTING,
 				C.STATUS, DECODE(A.BAY,C.P_BAY-1,'FORE',C.P_BAY+1,'AFTER','') CONT_40_LOCATION, C.ID_COMMODITY, C.TL_FLAG,C.ITT_FLAG, C.HAZARD,C.ID_POL,C.CONT_STATUS,
-				C.ID_POD, C.POD_COLOR, C.FOREGROUND_COLOR,C.BACKGROUND_COLOR, C.ID_OPERATOR, C.OPR_COLOR, ROUND( C.WEIGHT / 1000 ) WEIGHT,C.YD_LOCATION,C.ID_SPEC_HAND
+				C.ID_POD, C.POD_COLOR, C.FOREGROUND_COLOR,C.BACKGROUND_COLOR, C.ID_OPERATOR, C.OPR_COLOR, ROUND( C.WEIGHT / 1000 ) WEIGHT,C.YD_LOCATION
 					FROM
 						M_VESSEL_PROFILE_CELL B
 						LEFT JOIN M_VESSEL_PROFILE_BAY A
@@ -1730,7 +1720,6 @@ class Vessel extends CI_Model {
 							   CT.ID_COMMODITY,
 							   CT.TL_FLAG,
 							   CT.ITT_FLAG,
-							   CT.ID_SPEC_HAND,
 							   CASE WHEN (CT.ID_CLASS_CODE = 'S1' OR CT.ID_CLASS_CODE = 'S2') THEN DECODE(CS.BAY_,'',CT.VS_BAY_TO,CS.BAY_) ELSE DECODE(CT.VS_BAY,'',CS.BAY_,CT.VS_BAY) END AS P_BAY,
 							   CASE WHEN (CT.ID_CLASS_CODE = 'S1' OR CT.ID_CLASS_CODE = 'S2') THEN DECODE(CS.ROW_,'',CT.VS_ROW_TO,CS.ROW_) ELSE DECODE(CT.VS_ROW,'',CS.ROW_,CT.VS_ROW) END AS P_ROW,
 							   CASE WHEN (CT.ID_CLASS_CODE = 'S1' OR CT.ID_CLASS_CODE = 'S2') THEN DECODE(CS.TIER_,'',CT.VS_TIER_TO,CS.TIER_) ELSE DECODE(CT.VS_TIER,'',CS.TIER_,CT.VS_TIER) END AS P_TIER,
@@ -1768,10 +1757,10 @@ class Vessel extends CI_Model {
 		//debux($query);die;
 		$rs 		= $this->db->query($query, $param);
 		$data 		= $rs->result_array();
-		// debux($this->db->last_query());die;
-		//		if((($bay == 8 || $bay == 9) && $pos == 'BELOW')){
-		//		    echo '<pre>'.$this->db->last_query(),'</pre>';die;
-		//		}
+		//debux($data);die;
+//		if((($bay == 8 || $bay == 9) && $pos == 'BELOW')){
+//		    echo '<pre>'.$this->db->last_query(),'</pre>';die;
+//		}
 		return $data;
 	}
 
@@ -1883,47 +1872,55 @@ class Vessel extends CI_Model {
 		return $data;
 	}
 
-	public function get_count_tier($id_vessel, $id_bay,$tier){
-		$param = array($id_vessel, $id_bay, $tier);
-
-		$query = "SELECT count(*) AS JML FROM
-		M_VESSEL_PROFILE_CELL B LEFT JOIN M_VESSEL_PROFILE_BAY A 
-		ON A.ID_BAY = B.ID_BAY 
-		WHERE A.ID_VESSEL = ? 
-		AND A.ID_BAY = ? 
-		AND B.TIER_ = ? 
-		AND B.STATUS_STACK = 'A'";
-
-		$rs 		= $this->db->query($query, $param);
-		$data 		= $rs->row();
-		return $data;
-	}
-
-	public function get_count_row($id_vessel, $id_bay,$row, $pos=null){
-		$param = array($id_vessel, $id_bay, $row);
-		$addWhere='';
-		if(!is_null($pos)){
-			if($pos == 'DECK'){
-				$addWhere = " AND (B.POSISI_STACK = 'ABOVE' OR B.POSISI_STACK = 'DECK')";
-			}else{
-				$addWhere = " AND (B.POSISI_STACK = 'BELOW' OR B.POSISI_STACK = 'HATCH')";
-			}
+	public function get_count_row_and_tier($id_vessel, $id_bay,$pos,$row){
+		$param = array($id_vessel, $id_bay, $pos, $row);
+		if($pos == 'ABOVE'){
+		    $addWhere = " AND A.ABOVE = 'AKTIF'";
+		}else{
+		    $addWhere = " AND A.BELOW = 'AKTIF'";
 		}
 
-		$query = "SELECT count(*) AS JML FROM
+		$query = "SELECT count(*) AS JML_ROW, JML_TIER_UNDER FROM
 		M_VESSEL_PROFILE_CELL B LEFT JOIN M_VESSEL_PROFILE_BAY A 
 		ON A.ID_BAY = B.ID_BAY 
-		WHERE  A.ID_VESSEL = ? 
+		WHERE B.STATUS_STACK <> 'N' 
+		AND A.ID_VESSEL = ? 
 		AND A.ID_BAY = ? 
-		AND B.ROW_ = ? 
-		AND B.STATUS_STACK = 'A'
-		$addWhere";
+		AND B.POSISI_STACK = ? 
+		AND ROW_ = ? 
+		AND STATUS_STACK <> 'A' 
+		$addWhere
+		GROUP BY JML_TIER_UNDER";
 
 		$rs 		= $this->db->query($query, $param);
 		$data 		= $rs->row();
 		return $data;
 	}
 
+
+	public function get_count_row($id_vessel, $id_bay,$pos){
+		$param = array($id_vessel, $id_bay, $pos);
+		if($pos == 'ABOVE'){
+		    $addWhere = " AND A.ABOVE = 'AKTIF'";
+		}else{
+		    $addWhere = " AND A.BELOW = 'AKTIF'";
+		}
+
+		$query = "SELECT count(DISTINCT ROW_) AS JML_ROW, JML_TIER_UNDER FROM
+		M_VESSEL_PROFILE_CELL B LEFT JOIN M_VESSEL_PROFILE_BAY A 
+		ON A.ID_BAY = B.ID_BAY 
+		WHERE B.STATUS_STACK <> 'N' 
+		AND A.ID_VESSEL = ? 
+		AND A.ID_BAY = ? 
+		AND B.POSISI_STACK = ? 
+		AND STATUS_STACK = 'A' 
+		$addWhere
+		GROUP BY JML_TIER_UNDER";
+
+		$rs 		= $this->db->query($query, $param);
+		$data 		= $rs->row();
+		return $data;
+	}
 
 	public function get_count_row1($id_vessel, $id_bay,$pos){
 		$param = array($id_vessel, $id_bay, $pos);
@@ -3278,11 +3275,7 @@ class Vessel extends CI_Model {
 		}
 	}
 
-	public function get_si_category_group($id_ves_voyage){
-		$qid_ves_voyage = '';
-		if ($id_ves_voyage != ''){
-			$qid_ves_voyage = "INNER JOIN M_PLAN_CATEGORY_D E ON E.ID_CATEGORY=D.ID_CATEGORY AND E.ID_VES_VOYAGE = '$id_ves_voyage'";
-		}
+	public function get_si_category_group(){
 		$query = "SELECT A.ID_YARD_PLAN, B.YARD_NAME, C.BLOCK_NAME, A.START_SLOT||'-'||A.END_SLOT AS SLOT_RANGE, A.START_ROW||'-'||A.END_ROW AS ROW_RANGE, A.CAPACITY, D.CATEGORY_NAME, D.ID_CATEGORY
 			FROM YARD_PLAN_GROUP A
 			INNER JOIN M_YARD B ON A.ID_YARD=B.ID_YARD

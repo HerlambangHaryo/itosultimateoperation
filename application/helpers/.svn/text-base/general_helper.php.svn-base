@@ -1,0 +1,258 @@
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+
+/*
+ * Global error variable
+ */
+$error_msg = array();
+
+/**
+ * Converts value to nonnegative integer.
+ *
+ * @param mixed $maybeint Data you wish to have convered to an nonnegative integer
+ * @return int An nonnegative integer
+ */
+if ( !function_exists('absint') )
+{
+	function absint( $number )
+	{
+		return abs( intval( $number ) );
+	}
+}
+
+if ( ! function_exists('debux'))
+{
+	function debux($array, $is_die = FALSE)
+	{
+		if(is_array($array))
+		{
+			echo '<pre>'; print_r($array); echo '</pre>';
+
+			if ($is_die)
+			{
+				die();
+			}
+		}
+		else
+		{
+			echo '<pre>'; print_r($array); echo '</pre>';
+
+			if ($is_die)
+			{
+				die();
+			}
+		}
+
+		
+	}
+}
+
+
+
+if ( ! function_exists('add_single_quotes'))
+{
+	function add_single_quotes($param)
+	{
+		foreach ($param as $value) {
+			$val[] = "'".$value."'";
+		}
+
+		return $val;
+	}
+}
+
+if( ! function_exists('convert_days'))
+{
+	function convert_days($param)
+	{
+		$secs = strtotime($param);
+
+	    if($secs>=86400){$days=floor($secs/86400);$secs=$secs%86400;$r=$days.' day';if($days<>1){$r.='s';}if($secs>0){$r.=', ';}}  
+	    if($secs>=3600){$hours=floor($secs/3600);$secs=$secs%3600;$r.=$hours.' hour';if($hours<>1){$r.='s';}if($secs>0){$r.=', ';}}  
+	    if($secs>=60){$minutes=floor($secs/60);$secs=$secs%60;$r.=$minutes.' minute';if($minutes<>1){$r.='s';}if($secs>0){$r.=', ';}}  
+	    $r.=$secs.' second';if($secs<>1){$r.='s';}  
+	    
+	    return $r;  
+
+	}
+}
+
+if(!function_exists('get_dtl_mch'))
+{
+	function get_dtl_mch($id_ves_voyage,$id_machine,$size,$ie,$sts_cont){
+		$ci    		   =& get_instance();
+		$id_terminal   = $ci->gtools->terminal();
+		$id_class_code = "";
+
+		if($ie == 'I'){
+			$id_class_code = "('I','TI')";
+		}else{
+			$id_class_code = "('E')";
+		}
+
+		$sql = "SELECT
+					COUNT(*) AS JML
+				FROM
+					CON_LISTCONT
+				WHERE
+					TRIM(ID_VES_VOYAGE) = '$id_ves_voyage'
+					AND ID_TERMINAL 	= '$id_terminal'
+					AND ID_CLASS_CODE   IN $id_class_code
+					AND CONT_SIZE 		= '$size' 
+					AND CONT_STATUS     = '$sts_cont'
+					AND QC_PLAN 		= (SELECT MCH_NAME FROM M_MACHINE WHERE ID_MACHINE = '$id_machine')";
+		$response = $ci->db->query($sql)->row();
+		//debux($sql);
+		return $response->JML;
+	}
+}
+
+if(!function_exists('get_dtl_mch_sum'))
+{
+	function get_dtl_mch_sum($id_ves_voyage,$id_machine,$size,$ie,$cont_type){
+		$ci    		   =& get_instance();
+		$id_terminal   = $ci->gtools->terminal();
+		$id_class_code = "";
+
+		if($ie == 'I'){
+			$id_class_code = "('I','TI')";
+		}else{
+			$id_class_code = "('E')";
+		}
+
+		$q1 = "";
+		if($cont_type == 'OOG'){
+			$q1 = "AND CONT_HEIGHT = '$cont_type'";
+		}else{
+			$q1 = "AND CONT_TYPE   = '$cont_type'";
+		}
+
+
+		$sql = "SELECT
+					COUNT(*) AS JML
+				FROM
+					CON_LISTCONT
+				WHERE
+					TRIM(ID_VES_VOYAGE) = '$id_ves_voyage'
+					AND ID_TERMINAL 	= '$id_terminal'
+					AND ID_CLASS_CODE   IN $id_class_code
+					AND CONT_SIZE 		= '$size' 
+					$q1
+					AND QC_PLAN 		= (SELECT MCH_NAME FROM M_MACHINE WHERE ID_MACHINE = '$id_machine')";
+			
+		$response = $ci->db->query($sql)->row();
+
+		return $response->JML;
+	}
+}
+
+if(!function_exists('get_dtl_mch_sum_shift'))
+{
+	function get_dtl_mch_sum_shift($id_ves_voyage,$id_machine,$size,$sts_cont){
+		$ci    		   =& get_instance();
+		$id_terminal   = $ci->gtools->terminal();
+
+
+		$q1 = "";
+		if($sts_cont == 'RFR'){
+			$q1 = "AND CONT_TYPE = '$sts_cont'";
+		}elseif($sts_cont = 'OOG'){
+			$q1 = "AND CONT_HEIGHT = '$sts_cont'";
+		}else{
+			$q1 = "AND CONT_STATUS = '$sts_cont'";
+		}
+
+		$sql = "SELECT
+					COUNT(*) AS JML
+				FROM
+					CON_LISTCONT
+				WHERE
+					TRIM(ID_VES_VOYAGE) = '$id_ves_voyage'
+					AND ID_CLASS_CODE IN ('S1','S2')
+					$q1
+					AND CONT_SIZE       = '$size'
+					AND ID_TERMINAL 	= '$id_terminal'
+					";
+
+		$response = $ci->db->query($sql)->row();
+		return $response->JML;
+
+
+	}
+}
+
+if(!function_exists('get_hatch_ves'))
+{
+	function get_hatch_ves($id_ves_voyage){
+		$ci    		   =& get_instance();
+		$id_terminal   = $ci->gtools->terminal();
+
+		$sql = "SELECT
+					A.JUMLAH AS JML
+				FROM
+					ITOS_REPO.M_HATCH_MOVE A
+				LEFT JOIN ITOS_OP.VES_VOYAGE B ON A.VOYAGE_IN = B.VOY_IN AND A.VOYAGE_OUT = B.VOY_OUT AND A.VESSEL = B.VESSEL_NAME
+				WHERE B.ID_VES_VOYAGE = '$id_ves_voyage'";
+		$response = $ci->db->query($sql)->row();
+		return isset($response->JML) ? $response->JML : 0;
+
+
+	}
+}
+if(!function_exists('get_suspend_mch'))
+{
+	function get_suspend_mch($id_ves_voyage,$id_suspend){
+		$ci 			=& get_instance();
+		$id_terminal 	=  $ci->gtools->terminal();
+
+		$sql  			= "SELECT
+			                    C.MCH_NAME,
+			                    A.ID_SUSPEND,
+			                    B.ACTIVITY,
+			                    SUM(ROUND((A.END_SUSPEND - A.START_SUSPEND) * 24 * 60,0)) AS DIFF_MINUTES
+			                FROM JOB_SUSPEND A
+			                INNER JOIN M_SUSPEND B ON B.ID_SUSPEND=A.ID_SUSPEND
+			                INNER JOIN M_MACHINE C ON C.ID_MACHINE=A.ID_MACHINE
+			                WHERE A.ID_VES_VOYAGE = '$id_ves_voyage'
+			                AND A.ID_SUSPEND = '$id_suspend'
+			                GROUP BY C.MCH_NAME,
+			                    A.ID_SUSPEND,
+			                    B.ACTIVITY
+			                ORDER BY C.MCH_NAME";
+		$response 		= $ci->db->query($sql)->row();
+		return isset($response->DIFF_MINUTES) ? $response->DIFF_MINUTES : 0;
+	}
+}
+
+if(!function_exists('get_suspend_mch_idle'))
+{
+	function get_suspend_mch_idle($id_ves_voyage){
+		$ci 			=& get_instance();
+		$id_terminal    = $ci->gtools->terminal();
+
+		$sql 			= "SELECT
+					            C.MCH_NAME,
+					            A.ID_SUSPEND,
+					            B.ACTIVITY,
+					            SUM(ROUND((A.END_SUSPEND - A.START_SUSPEND) * 24 * 60,0)) AS DIFF_MINUTES
+					        FROM JOB_SUSPEND A
+					        INNER JOIN M_SUSPEND B ON B.ID_SUSPEND=A.ID_SUSPEND
+					        INNER JOIN M_MACHINE C ON C.ID_MACHINE=A.ID_MACHINE
+					        WHERE A.ID_VES_VOYAGE = '$id_ves_voyage'
+					        AND B.EQ_TYPE = 'QUAY' 
+					       	AND B.CATEGORY = 'IDLE'
+					        GROUP BY C.MCH_NAME,
+					            A.ID_SUSPEND,
+					            B.ACTIVITY
+					        ORDER BY C.MCH_NAME";
+		$response       = $ci->db->query($sql)->result();
+
+		$ttl = 0;
+		foreach ($response as $key => $value) {
+			$ttl += $value['DIFF_MINUTES'];
+		}
+
+		return $ttl;
+	}
+}
+
+

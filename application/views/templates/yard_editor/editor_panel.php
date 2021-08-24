@@ -80,7 +80,7 @@ $(function() {
 			$("#selected_height_<?=$tab_id?>").val(height);
 		}
 	});
-		
+
 	$.contextMenu({
 		selector: "#selectable_<?=$tab_id?> .ui-selected",
 		items: {

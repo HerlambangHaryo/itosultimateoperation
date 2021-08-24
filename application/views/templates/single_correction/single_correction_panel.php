@@ -123,19 +123,6 @@ Ext.onReady(function(){
 
 	//console.log('size : ');+$('#CONT_SIZE-inputEl').val()+'/'+$('#CONT_TYPE-inputEl').val()
 
-	/*var over_store = Ext.create('Ext.data.Store', {
-		fields:['ID_ISO_CODE', 'ID_ISO_CODE'],
-		proxy: {
-			type: 'ajax',
-			url: '<?=controller_?>single_correction/data_cont_iso_code/',
-			reader: {
-				type: 'json'
-			}
-		},
-		autoLoad: true
-	});*/
-	
-
 	var iso_code_store = Ext.create('Ext.data.Store', {
 		fields:['ID_ISO_CODE', 'ID_ISO_CODE'],
 		proxy: {
@@ -148,6 +135,18 @@ Ext.onReady(function(){
 		autoLoad: true
 	});
 
+	var over_store = Ext.create('Ext.data.Store', {
+		fields:['ID_ISO_CODE', 'ID_ISO_CODE'],
+		proxy: {
+			type: 'ajax',
+			url: '<?=controller_?>single_correction/data_cont_iso_code/',
+			reader: {
+				type: 'json'
+			}
+		},
+		autoLoad: true
+	});
+	
 	var unno_list_store = Ext.create('Ext.data.Store', {
 		fields:['UNNO', 'UNNO'],
 		proxy: {
@@ -318,19 +317,6 @@ Ext.onReady(function(){
 				fieldLabel: 'Temp. (C)',
 				name: 'TEMP'
 			},{
-				// xtype: 'textfield',
-				// displayField: 'UNNO',
-				// valueField: 'UNNO',
-				// store: unno_list_store,
-				// queryMode: 'remote',
-				// // forceSelection: true,
-				// hideTrigger: true,
-				// triggerAction: 'query',
-				// emptyText: 'Autocomplete',
-				// typeAhead: true,
-				// minChars: 1,
-				// fieldLabel: 'UNNO',
-				// name: 'UNNO'				
 				xtype: 'combo',
 				displayField: 'UNNO',
 				valueField: 'UNNO',
@@ -345,38 +331,7 @@ Ext.onReady(function(){
 				minChars: 1,
 				fieldLabel: 'UNNO',
 				name: 'UNNO'
-
 			},{
-			// 	xtype: 'combo', displayfield
-			// 	displayField: 'ID_ISO_CODE',
-			// 	valueField: 'ID_ISO_CODE',
-			// 	store: iso_code_store,
-			// 	queryMode: 'remote',
-			// 	forceSelection: true,
-			// 	hideTrigger: true,
-			// 	editable: true,
-			// 	triggerAction: 'query',
-			// 	emptyText: 'Autocomplete',
-			// 	typeAhead: true,
-			// 	minChars: 1,
-			// 	fieldLabel: 'ISO',
-			// 	name: 'ID_ISO_CODE'
-			// },{
-				// xtype: 'textfield',
-				// displayField: 'IMDG',
-				// valueField: 'IMDG',
-				// store: imdg_list_store,
-				// queryMode: 'remote',
-				// // forceSelection: true,
-				// hideTrigger: true,
-				// triggerAction: 'query',
-				// emptyText: 'Autocomplete',
-				// typeAhead: true,
-				// minChars: 1,
-				// fieldLabel: 'IMDG',
-				// name: 'IMDG'
-
-						
 				xtype: 'combo',
 				displayField: 'IMDG',
 				valueField: 'IMDG',
@@ -391,7 +346,6 @@ Ext.onReady(function(){
 				minChars: 1,
 				fieldLabel: 'IMDG',
 				name: 'IMDG'
-
 			},{
 				xtype: 'textfield',
 				fieldLabel: 'Seal Number',

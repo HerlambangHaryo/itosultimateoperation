@@ -64,7 +64,7 @@ class Quay_job_manager extends CI_Controller {
 		// echo '<pre>';print_r($filterbyminute['value']);die();
 		$this->session->set_userdata($sfil);
 		$retval = $this->container->get_data_quay_job_list($paging, $sort, $arr_filter);
-		// echo '<pre>';print_r($retval);echo '</pre>';exit;
+//		echo '<pre>';print_r($retval);echo '</pre>';exit;
 		echo json_encode($retval);
 	}
 
@@ -154,62 +154,47 @@ class Quay_job_manager extends CI_Controller {
 		echo json_encode($data);
 	}
 	
-	public function tally_confirm()
-	{
-		// echo 'fuck';exit;
-		$no_container 			= $_POST['no_container'];
-		$point 					= $_POST['point'];
-		$id_class_code 			= $_POST['id_class_code'];
-		$id_ves_voyage 			= $_POST['id_ves_voyage'];
+	public function tally_confirm(){
+//	    echo 'fuck';exit;
+		$no_container = $_POST['no_container'];
+		$point = $_POST['point'];
+		$id_class_code = $_POST['id_class_code'];
+		$id_ves_voyage = $_POST['id_ves_voyage'];
 		$job 			= $_POST['job'];
-		$stowage 				= array('00','00','00');
-
-		if ($_POST['stowage'] 	!= '')
-		{
-			$stowage 			= array((int) substr($_POST['stowage'],-6,2),(int) substr($_POST['stowage'],-4,2),(int) substr($_POST['stowage'],-2,2));
-			$str_stowage 		= array(substr($_POST['stowage'],0,2),substr($_POST['stowage'],2,2),substr($_POST['stowage'],4,2));
-			// $location = array(substr($_POST['conloc2'],0,2),substr($_POST['conloc2'],2,2),substr($_POST['conloc2'],4,2));
+		$stowage = array('00','00','00');
+		if ($_POST['stowage']!=''){
+			$stowage = array((int) substr($_POST['stowage'],-6,2),(int) substr($_POST['stowage'],-4,2),(int) substr($_POST['stowage'],-2,2));
+			$str_stowage = array(substr($_POST['stowage'],0,2),substr($_POST['stowage'],2,2),substr($_POST['stowage'],4,2));
+//			$location = array(substr($_POST['conloc2'],0,2),substr($_POST['conloc2'],2,2),substr($_POST['conloc2'],4,2));
 		}
-
-		// print_r($stowage);exit;
-
-		$id_machine 			= $_POST['id_machine'];
-		$driver_id 				= $_POST['driver_id'];
-		$itv 					= $_POST['itv'];
+//		print_r($stowage);exit;
+		$id_machine = $_POST['id_machine'];
+		$driver_id = $_POST['driver_id'];
+		$itv = $_POST['itv'];
 
 		$response 				= $this->machine->validation_data_itv_class($id_class_code,$itv,$no_container);
-
-		if($response == 'full' and $job != 'L')
-		{
+		if($response=='full' and $job != 'L'){
 			//ada isi
-			$retval 			= array('NOT OK', 'Container is Full');
+			$retval = array('NOT OK', 'Container is Full');
 			echo json_encode($retval);
-		}
-		else
-		{
-			$valid_stowage 		= 1;
-			if ($id_class_code == 'E' || $id_class_code == 'TE')
-			{
-				$valid_stowage 	= $this->check_stowage_position($id_ves_voyage, $stowage);
-
-				if ($valid_stowage == 2)
-				{
-					$retval 	= array('NOT OK', 'Stowage Position Not Valid');
-				}
-				else if ($valid_stowage == 3)
-				{
-					$retval 	= array('NOT OK', 'Stowage Position Already Taken');
+		}else{
+			$valid_stowage = 1;
+			if ($id_class_code=='E' || $id_class_code=='TE'){
+				$valid_stowage = $this->check_stowage_position($id_ves_voyage, $stowage);
+				if ($valid_stowage==2){
+					$retval = array('NOT OK', 'Stowage Position Not Valid');
+				}else if ($valid_stowage==3){
+					$retval = array('NOT OK', 'Stowage Position Already Taken');
 				}
 			}
 			
-			if ($valid_stowage == 1)
-			{
-				$retval 		= $this->container->tally_confirm_submit($no_container, $point, $id_class_code, $str_stowage, $this->session->userdata('id_user'), $driver_id, $itv, $id_machine,'','','',$id_ves_voyage);
+			if ($valid_stowage==1){
+				$retval = $this->container->tally_confirm_submit($no_container, $point, $id_class_code, $str_stowage, $this->session->userdata('id_user'), $driver_id, $itv, $id_machine,'','','',$id_ves_voyage);
 			}
-
 			//debux($retval);die;
 			echo json_encode($retval);
 		}
+
 		
 	}
 	

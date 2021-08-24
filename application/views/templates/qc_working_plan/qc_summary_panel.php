@@ -318,7 +318,7 @@ function deletemchstt(idmwp,mchname){
 		}
 	}
 }
-	
+
 function updatemchstt(idvvd,mchid,mchname,bch,stwk,enwk){
 	var mch_master_store1 = Ext.create('Ext.data.Store', {
         fields:['ID_MACHINE', 'MCH_NAME'],

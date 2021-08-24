@@ -1,0 +1,64 @@
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+
+session_start();
+
+class Report_gate extends CI_Controller {
+	public function __construct(){
+		parent::__construct();
+		$this->load->helper('url'); 
+		$this->load->helper('form');
+		$this->load->library('form_validation');
+		$this->load->model('monitoring');
+		$this->load->model('gtools');
+		$this->load->model('vessel');
+	}
+	
+	public function index(){
+		$data['tab_id'] = $_GET['tab_id'];
+		$this->load->view('templates/report/report_gate', $data);
+	}
+
+        public function data_vessel(){
+		$data	= $this->vessel->get_vessel_schedule();
+                
+                $return = array();
+                foreach($data['data'] as $item){
+                    $return[] = array(
+                        'ID_VESSEL' => $item['ID_VESSEL'],
+                        'VESSEL_NAME' => $item['VESSEL_NAME'].'-'.$item['VOY_IN'].'/'.$item['VOY_OUT']
+                    );
+                }
+		echo json_encode($return);
+	}
+        
+    public function data_pbm(){
+		$data	= $this->vessel->get_stevedoring_companies();
+		echo json_encode($data);
+	}
+        
+	public function get_data_gate(){
+		$date_gate_in  = $this->input->get('DATE_GATE_IN');
+		$date_gate_out = $this->input->get('DATE_GATE_OUT');
+		$kegiatan      = $this->input->get('KEGIATAN');
+		$shipping_line = substr($this->input->get('SHIPPING_LINE'),0,1);
+		$esy = $this->input->get('ESY');
+		$gate = $this->input->get('GATE');
+		$vessel = $this->input->get('VESSEL');
+		// $pbm = $this->input->get('pbm');
+
+		$retval['data_detail'] = $this->monitoring->get_data_report_gate($date_gate_in, $date_gate_out, $kegiatan, $shipping_line, $esy, $gate, $vessel, $pbm);
+		
+		$sumTRT = 0;
+		$in = 0;
+		foreach ($retval['data_detail'] as $value) {
+			$sumTRT = $sumTRT + $value['TRTMIN'];
+			$in += 1;
+		}
+		$retval['data_trt'] = round($sumTRT/$in);
+
+//		echo '<pre>sum : ';print_r($sumTRT); echo '</pre>';
+//		echo '<pre>in : ';print_r($in); echo '</pre>';
+//		echo '<pre>';print_r($retval['data_trt']); echo '</pre>';exit;
+		$this->load->view('templates/report/ete_report_gate', $retval);
+	}
+}

@@ -1,7 +1,7 @@
 
 <?PHP 
 	$MXWDTHA4=2268+374;
-	$MXHGHTA4=1566+40;
+	$MXHGHTA4=1566;
 	
 	$jumbay=count($bay_area);
 	$top1=20;
@@ -59,23 +59,8 @@
 	?>
 <style>
 .corner-left-label{
-    right: 5.2px;
+    left: 0.8px;
     top: -1px;
-    font-size: <?= floor($konstantabox / 4)?>px;
-    position: absolute;
-}
-
-.corner-hq-left-label{
-    right: 0.4px;
-    top: -1px;
-    font-size: <?= floor($konstantabox / 4)?>px;
-    position: absolute;
-}
-
-.div-job-seq{
-	left: 1px;
-    top: -1px;
-	font-weight: bold;
     font-size: <?= floor($konstantabox / 4)?>px;
     position: absolute;
 }
@@ -97,10 +82,6 @@
 	position:absolute;
 	font-size:<?=($max_fontbox);?>pt;font-family: calibri, serif;
 	text-align:center;
-}
-
-.display-none {
-	display: none;
 }
 
 .text_nocontainer
@@ -149,7 +130,7 @@
 			$hatchpx=floor($bay['MAX_ROW']*$konstantabox)-5;
 		}
 		//echo '&& ' . $hatchpx;
-		$maxheight=($bay['MAX_TIERUNDER']+$bay['MAX_TIERON']+5)*$konstantabox+8;
+		$maxheight=($bay['MAX_TIERUNDER']+$bay['MAX_TIERON']+5)*$konstantabox;
 		$pembanding=($left+($maxwidth*2)+$konstantabox);
 		$pembanding1=($left+$maxwidth)+$konstantabox;
 		if((($pembanding>$maxdivwidth) && ($bay['BAYGENAP']=='')) or ($pembanding1>=$maxdivwidth))
@@ -211,41 +192,9 @@
 					$start = $bay["MAX_ROW"] - 1;
 				}
 //				echo 'jml row : '.$bay["MAX_ROW"];
-				$left_row = 0 ;
-				$temp_row = 0;
-				$check_row = false;
-				$isDisplayNone = false;
-				$selisih = 0;
-				$temp_row_1 = 0 ;
-				$arr_total_row = array();
-				$arr_left_row = array();
 				for($j = 1; $j <= $bay["MAX_ROW"]; $j++){
-					$row = str_pad($start,2,'0',STR_PAD_LEFT);
-					$count_row = $this->vessel->get_count_row($ID_VESSEL, $bay['ID_BAY'],$row);
-					if($j == 1){
-						$temp_row_1 = $leftclAbv;
-					} else if ($j == 2) {
-						$selisih = $leftclAbv - $temp_row_1 ;
-					}
-					$left_row = $leftclAbv;
-					if($count_row->JML < 1){
-						$status_row_hid = 'display-none';
-						$temp_row = $leftclAbv;
-						$check_row=true;
-						$isDisplayNone = true;
-					} else {
-						$status_row_hid = '';
-						if($check_row){
-							$left_row = $temp_row;
-						} else if($isDisplayNone) {
-							$left_row -= $selisih;
-						}
-						array_push($arr_total_row, $row);
-						array_push($arr_left_row, $left_row);
-						$check_row = false;
-					}
 				?>
-				<div class="row-number <?=$status_row_hid?>" style="left:<?=$left_row;?>px;"><?=$row?></div>
+				<div class="row-number" style="left:<?=$leftclAbv;?>px;"><?=str_pad($start,2,'0',STR_PAD_LEFT)?></div>
 				<?php 
 				    if (($start + $n) == 0){
 					if ($odd){
@@ -273,30 +222,9 @@
 				$firsttier=0;
 //				$resCellAbv=$this->vessel->get_cellPerBayVesselAbv($ID_VESSEL,$id_ves_voyage,$bay['BAY'],'ABOVE',$ei);
 				$resCellAbv = $this->vessel->get_vessel_profile_cellInfo($id_ves_voyage, $ei, $ID_VESSEL, $bay['ID_BAY'], $bay['BAY'], 'ABOVE');
-				
-				$left_row = 0 ;
-				$isDisplayNone = false;
-				$putih =0;
-				$arr_row = array();
-				$i = 0;
-				$i_putih =1;
-				$tier_putih = 0;
-				$top_tier = array($topclAbv);
-				$tier = array();
-				$topclAbvss = $topclAbv;
-				$status_tier_hid=false;
-				$lastTopclAbvss = $topclAbv;
-				foreach($resCellAbv as $key => $rcAbv)
+				foreach($resCellAbv as $rcAbv)
 				{
 					/*remarks row atas*/
-					if($key == 0){
-						$count_tier =  $this->vessel->get_count_tier($ID_VESSEL, $bay['ID_BAY'],$rcAbv['TIER_']);
-						$status_tier_hid = ($count_tier->JML < 1) ? true : false;
-						if($status_tier_hid){
-							$tier_putih++;
-						}
-					}
-
 					if($rowB==1)
 					{
 						$firsttier=$rcAbv['TIER_'];
@@ -314,7 +242,7 @@
 							height:<?=$konstantabox;?>px;
 							border:1px solid white;
 							position:absolute;
-							left:<?=$left_row;?>px;
+							left:<?=$leftclAbv;?>px;
 							top:<?=$topDr;?>px;
 							
 						}
@@ -329,52 +257,18 @@
 					{
 						
 						$leftclAbv=$startleft;
-						$count_tier =  $this->vessel->get_count_tier($ID_VESSEL, $bay['ID_BAY'],$rcAbv['TIER_']);
 						$topclAbv=$topclAbv+$konstantabox;
-
-						array_push($top_tier, $topclAbv);
-						if($count_tier->JML < 1){
-							$topclAbvss = 0;
-							$status_tier_hid = true;
-							$tier_putih++;
-						} else {
-							$status_tier_hid = false;
-							if(!in_array($rcAbv['TIER_'], $tier)){
-								$topclAbvss = $top_tier[$i_putih-$tier_putih];
-								$lastTopclAbvss = $topclAbvss;
-							}
-						}
-
 						$rowB=1;
-						$arr_row = array();
-						$isDisplayNone = false;
-						$putih=0;
-						$i=0;
-						$i_putih++;
 						
 					}
 					
-					array_push($tier, $rcAbv['TIER_']);
-					array_push($arr_row, $leftclAbv);
-					$left_row = $leftclAbv;
 					if($rcAbv['STATUS_STACK']=='X')
 					{
 						$color='white';
-						$left_row = $leftclAbv;
-						$isDisplayNone = true;
-						if(($arr_total_row[$i-$putih] != $rcAbv['ROW_'])){
-							$putih++;
-						} else {
-							$left_row = $arr_row[$i-$putih];
-						}
 					}
-					else{
+					else
 						$color='gray';
-						if($isDisplayNone){
-							$left_row = $arr_row[$i-$putih];
-						}
-					}
-					$i++;
+						
 					if($rcAbv['CONT_STATUS']=='FCL')
 					{
 						$colorbull='red';
@@ -396,10 +290,9 @@
 						width:<?=$konstantabox;?>px;
 						height:<?=$konstantabox;?>px;
 						border:1px solid <?=$color;?>;
-						display: <?=($color == 'white') ? 'none' : 'block'?>;
 						position:absolute;
-						left:<?=$left_row;?>px;
-						top:<?=$topclAbvss;?>px;
+						left:<?=$leftclAbv;?>px;
+						top:<?=$topclAbv;?>px;
 						font-size:<?=($konstantabox/2);?>pt;font-family: calibri, serif;
 					}
 					.boxContX<?=$paramclass;?>b<?=$bay['BAY'];?>rc<?=$rcAbv['CELL_NUMBER'];?>
@@ -408,8 +301,8 @@
 						height:<?=$konstantabox;?>px;
 						border:1px solid <?=$color;?>;
 						position:absolute;
-						left:<?=$left_row;?>px;
-						top:<?=$topclAbvss;?>px;
+						left:<?=$leftclAbv;?>px;
+						top:<?=$topclAbv;?>px;
 						background-color: <?=$colorbull?>;
 						font-size:<?=($konstantabox/2);?>pt;font-family: calibri, serif;
 					}
@@ -420,8 +313,8 @@
 						height:<?=$konstantabox;?>px;
 						border:1px solid <?=$color;?>;
 						position:absolute;
-						left:<?=$left_row;?>px;
-						top:<?=$topclAbvss;?>px;
+						left:<?=$leftclAbv;?>px;
+						top:<?=$topclAbv;?>px;
 						background:
 							linear-gradient(to top left,
 							rgba(0,0,0,0) 0%,
@@ -444,8 +337,8 @@
 						height:<?=$konstantabox;?>px;
 						border:1px solid <?=$color;?>;
 						position:absolute;
-						left:<?=$left_row;?>px;
-						top:<?=$topclAbvss;?>px;
+						left:<?=$leftclAbv;?>px;
+						top:<?=$topclAbv;?>px;
 						/*background:
 							linear-gradient(to top right,
 							rgba(0,0,0,0) 0%,
@@ -483,8 +376,8 @@
 						height:<?=$konstantabox;?>px;
 						border: 1px solid gray;
 						position:absolute;
-						left:<?=$left_row;?>px;
-						top:<?=$topclAbvss;?>px;
+						left:<?=$leftclAbv;?>px;
+						top:<?=$topclAbv;?>px;
 						background:
 							
 							linear-gradient(to bottom right,
@@ -506,8 +399,8 @@
 						border-left:1px solid grey;
 						background-image: linear-gradient(135deg, white 50%, <?=$colorbull?> 51%);  
 						position:absolute;
-						left:<?=$left_row;?>px;
-						top:<?=$topclAbvss;?>px;
+						left:<?=$leftclAbv;?>px;
+						top:<?=$topclAbv;?>px;
 						font-size:<?=($konstantabox/2);?>pt;font-family: calibri, serif;
 					}
 					</style>
@@ -556,25 +449,13 @@
 					<!-- show container number and POD -->
 					<div 
 					class="<?=$classy;?><?=$paramclass;?>b<?=$bay['BAY'];?>rc<?=$rcAbv['CELL_NUMBER'];?>" style="<?php if($rcAbv['CONT_TYPE']=='HQ'){?>text-align:left<?}?>">
-						<?php
-						if($rcAbv['CONT_TYPE']=='HQ'){
-							?>
-								<div class="corner-hq-left-label">&#9701;</div>
-						<?php
-						}
+					    <?php
 						if($rcAbv['TL_FLAG']=='Y'){
 								?>
 							<div class="corner-left-label">&#9660;</div>
 						<?php }else if($rcAbv['HAZARD']=='Y'){ ?>
 							<div class="corner-left-label">&#9674;</div>
 						<?php } ?>
-						<?php if ($rcAbv['SEQUENCE']!=''){ ?> 
-						    		<div class="div-job-seq">
-							    		<?php if ($rcAbv['STATUS']=='P') {
-							    			echo $rcAbv['SEQUENCE'];
-							    		} else { echo "C"; }  ?>
-							    	</div>
-						<?php } ?> 
 						<div class="text_nocontainer"><?= substr($rcAbv['NO_CONTAINER'],0,4)?></div>
 						<div class="text_nocontainer_small"><?=substr($rcAbv['NO_CONTAINER'],4)?></div>
 						<div class="text_pod"><?=$rcAbv['ID_POD']?></div>
@@ -596,9 +477,8 @@
 							height:<?=$konstantabox;?>px;
 							border:1px solid white;
 							position:absolute;
-							display: <?=($status_tier_hid) ? 'none' : 'block'?>;
 							left:<?=$leftDr;?>px;
-							top:<?=$topclAbvss;?>px;
+							top:<?=$topclAbv;?>px;
 							
 						}
 						</style>
@@ -626,7 +506,7 @@
 						background-color:black;
 						position:absolute;
 						left:<?=$stHleft;?>px;
-						top:<?=$lastTopclAbvss+($konstantabox+($konstantabox/2));?>px;
+						top:<?=$topclAbv+($konstantabox+($konstantabox/2));?>px;
 						
 					}
 					.text-triangle-up{
@@ -719,7 +599,7 @@
 						background-color:white;
 						position:absolute;
 						left:<?=$stHleft;?>px;
-						top:<?=$lastTopclAbvss+($konstantabox+($konstantabox/2));?>px;
+						top:<?=$topclAbv+($konstantabox+($konstantabox/2));?>px;
 					}
 					</style>
 					<div class="hatchstEmpty<?=$paramclass;?><?=$bay['BAY'];?>"> </div>
@@ -758,7 +638,7 @@
 					?>
 				</div>
 				
-				<div style="left:<?=$stHleft+($konstantabox*1.5)-10;?>;top:<?=$lastTopclAbvss+($konstantabox/2);?>;position:absolute;">
+				<div style="left:<?=$stHleft+($konstantabox*1.5)-10;?>;top:<?=$topclAbv+($konstantabox/2);?>;position:absolute;">
 					<?=$f20sumA['JML'];?> + <?=$f40sumA['JML'];?><br><hr><?=$f20sumB['JML'];?> + <?=$f40sumB['JML'];?>
 				</div>
 				
@@ -766,7 +646,7 @@
 				<?php 
 					$data_mchplan = $this->vessel->get_machine_plan_dh($ID_VESSEL, $id_ves_voyage, $class_code, $rcAbv['ID_BAY'], 'H');
 				?>
-				<div style="left:<?=$stHleft+($konstantabox*1.5)-10;?>;top:<?=$lastTopclAbvss+($konstantabox/2)+30;?>;position:absolute;text-align: left;">
+				<div style="left:<?=$stHleft+($konstantabox*1.5)-10;?>;top:<?=$topclAbv+($konstantabox/2)+30;?>;position:absolute;text-align: left;">
 					<?php
 					foreach($data_mchplan as $data_mchdet){
 						echo "<div class=\"".$assigned_shape[$data_mchdet['ID_MACHINE']]."\">
@@ -788,85 +668,32 @@
 				
 				$rowB=1;
 				$startleft=($konstantabox/4);
-				$starttop=$lastTopclAbvss+($konstantabox*2);
+				$starttop=$topclAbv+($konstantabox*2);
 				$topclAbv=$starttop;
 				$leftclAbv=$startleft;
 				$firsttier=0;
 //				$resCellAbv=$this->vessel->get_cellPerBayVesselAbv($ID_VESSEL,$id_ves_voyage,$bay['BAY'],'BELOW',$class_code);
 				$resCellAbv = $this->vessel->get_vessel_profile_cellInfo($id_ves_voyage, $ei, $ID_VESSEL, $bay['ID_BAY'], $bay['BAY'], 'BELOW');
-				$left_row = 0 ;
-				$isDisplayNone = false;
-				$putih =0;
-				$arr_row = array();
-				$i = 0;
-				$i_putih =1;
-				$tier_putih = 0;
-				$top_tier = array($topclAbv);
-				$tier = array();
-				$topclAbvss = $topclAbv;
-				$status_tier_hid=false;
-				$lastTopclAbvss2 = $topclAbv;
-				foreach($resCellAbv as $key => $rcAbv)
+				foreach($resCellAbv as $rcAbv)
 				{
-					if($key == 0){
-						$count_tier =  $this->vessel->get_count_tier($ID_VESSEL, $bay['ID_BAY'],$rcAbv['TIER_']);
-						$status_tier_hid = ($count_tier->JML < 1) ? true : false;
-						if($status_tier_hid){
-							$tier_putih++;
-						}
-					}
+					
 					
 					if($rowB>$bay['MAX_ROW'])
 					{
 						
 						$leftclAbv=$startleft;
-						$count_tier =  $this->vessel->get_count_tier($ID_VESSEL, $bay['ID_BAY'],$rcAbv['TIER_']);
 						$topclAbv=$topclAbv+$konstantabox;
-						
-						array_push($top_tier, $topclAbv);
-						if($count_tier->JML < 1){
-							$topclAbvss = 0;
-							$tier_putih++;
-							$status_tier_hid = true;
-						} else {
-							$status_tier_hid = false;
-							if(!in_array($rcAbv['TIER_'], $tier)){
-								$topclAbvss = $top_tier[$i_putih-$tier_putih];
-								$lastTopclAbvss2 = $topclAbvss;
-							}
-							
-						}
-						array_push($tier, $rcAbv['TIER_']);
-
 						$rowB=1;
-						$arr_row = array();
-						$isDisplayNone = false;
-						$putih=0;
-						$i=0;
-						$i_putih++;
 						
 					}
-
-					array_push($arr_row, $leftclAbv);
-					$left_row = $leftclAbv;
+					
 					if($rcAbv['STATUS_STACK']=='X')
 					{
 						$color='white';
-						$left_row = $leftclAbv;
-						$isDisplayNone = true;
-						if(($arr_total_row[$i-$putih] != $rcAbv['ROW_'])){
-							$putih++;
-						} else {
-							$left_row = $arr_row[$i-$putih];
-						}
 					}
-					else{
+					else
 						$color='gray';
-						if($isDisplayNone){
-							$left_row = $arr_row[$i-$putih];
-						}
-					}
-					$i++;
+						
 						
 					if($rcAbv['CONT_STATUS']=='FCL')
 					{
@@ -888,10 +715,9 @@
 						width:<?=$konstantabox;?>px;
 						height:<?=$konstantabox;?>px;
 						border:1px solid <?=$color;?>;
-						display: <?=($color == 'white') ? 'none' : 'block'?>;
 						position:absolute;
-						left:<?=$left_row;?>px;
-						top:<?=$topclAbvss;?>px;
+						left:<?=$leftclAbv;?>px;
+						top:<?=$topclAbv;?>px;
 						font-size:<?=($konstantabox/2);?>pt;font-family: calibri, serif;
 					}
 					.boxContX<?=$paramclass;?><?=$bay['BAY'];?><?=$rcAbv['CELL_NUMBER'];?>
@@ -900,8 +726,8 @@
 						height:<?=$konstantabox;?>px;
 						border:1px solid <?=$color;?>;
 						position:absolute;
-						left:<?=$left_row;?>px;
-						top:<?=$topclAbvss;?>px;
+						left:<?=$leftclAbv;?>px;
+						top:<?=$topclAbv;?>px;
 						background-color: <?=$colorbull?>;
 						font-size:<?=($konstantabox/2);?>pt;font-family: calibri, serif;
 					}
@@ -912,8 +738,8 @@
 						height:<?=$konstantabox;?>px;
 						border: 1px solid gray;
 						position:absolute;
-						left:<?=$left_row;?>px;
-						top:<?=$topclAbvss;?>px;
+						left:<?=$leftclAbv;?>px;
+						top:<?=$topclAbv;?>px;
 						background:
 							
 							linear-gradient(to bottom right,
@@ -934,8 +760,8 @@
 						height:<?=$konstantabox;?>px;
 						border:1px solid <?=$color;?>;
 						position:absolute;
-						left:<?=$left_row;?>px;
-						top:<?=$topclAbvss;?>px;
+						left:<?=$leftclAbv;?>px;
+						top:<?=$topclAbv;?>px;
 						/*background:
 							linear-gradient(to top right,
 							rgba(0,0,0,0) 0%,
@@ -972,8 +798,8 @@
 						height:<?=$konstantabox;?>px;
 						border:1px solid <?=$color;?> !important;
 						position:absolute;
-						left:<?=$left_row;?>px;
-						top:<?=$topclAbvss;?>px;
+						left:<?=$leftclAbv;?>px;
+						top:<?=$topclAbv;?>px;
 						background:
 							linear-gradient(to top left,
 							rgba(0,0,0,0) 0%,
@@ -997,8 +823,8 @@
 						border-left:1px solid grey;
 						background-image: linear-gradient(135deg, white 50%, <?=$colorbull?> 51%);  
 						position:absolute;
-						left:<?=$left_row;?>px;
-						top:<?=$topclAbvss;?>px;
+						left:<?=$leftclAbv;?>px;
+						top:<?=$topclAbv;?>px;
 						font-size:<?=($konstantabox/2);?>pt;font-family: calibri, serif;
 					}
 					
@@ -1051,24 +877,12 @@
 					<!-- show container number and POD -->
 					<div 
 					class="<?=$classy;?><?=$paramclass;?><?=$bay['BAY'];?><?=$rcAbv['CELL_NUMBER'];?>" style="<?php if($rcAbv['CONT_TYPE']=='HQ'){?>text-align:left<?}?>">
-						<?php
-						if($rcAbv['CONT_TYPE']=='HQ'){
-							?>
-								<div class="corner-hq-left-label">&#9701;</div>
-						<?php
-						}
+					    <?php
 						if($rcAbv['TL_FLAG']=='Y'){ ?>
 							<div class="corner-left-label">&#9660;</div>
 						<?php }else if($rcAbv['HAZARD']=='Y'){ ?>
 							<div class="corner-left-label">&#9674;</div>
 						<?php } ?>
-						<?php if ($rcAbv['SEQUENCE']!=''){ ?> 
-						    		<div class="div-job-seq">
-							    		<?php if ($rcAbv['STATUS']=='P') {
-							    			echo $rcAbv['SEQUENCE'];
-							    		} else { echo "C"; }  ?>
-							    	</div>
-						<?php } ?> 
 							<div class="text_nocontainer"><?= substr($rcAbv['NO_CONTAINER'],0,4)?></div>
 						<div class="text_nocontainer_small"><?=substr($rcAbv['NO_CONTAINER'],4)?></div>
 						<div class="text_pod"><?=$rcAbv['ID_POD']?></div>
@@ -1090,8 +904,7 @@
 							border:1px solid white;
 							position:absolute;
 							left:<?=$leftDr;?>px;
-							display: <?=($status_tier_hid) ? 'none' : 'block'?>;
-							top:<?=$topclAbvss;?>px;
+							top:<?=$topclAbv;?>px;
 							
 						}
 						</style>
@@ -1102,24 +915,6 @@
 					$rowB++;
 				}
 				/*cell Below*/
-				?>
-				<?php
-				$startleft=$konstantabox/4;
-				$leftclAbv=$startleft;
-				$odd = false;
-				$n = -2;
-				if( ($bay["MAX_ROW"] % 2) == 0){
-					$start = $bay["MAX_ROW"];
-				}else{
-					$odd = true;
-					$start = $bay["MAX_ROW"] - 1;
-				}
-//				echo 'jml row : '.$bay["MAX_ROW"];
-				foreach($arr_total_row as $key=> $row){
-				?>
-				<div class="row-number" style="left:<?=$arr_left_row[$key];?>px;;top:<?=$lastTopclAbvss2+46?>"><?=$row?></div>
-				<?php 
-				}
 				?>
 		</div>
 	</div>
@@ -1135,7 +930,7 @@
 	.remarksVes
 	{
 		left:20px;
-		top:<?=($maxdivheight+$konstantabox+$top1+($maxdivheight/2))+20;?>px;
+		top:<?=($maxdivheight+$konstantabox+$top1+($maxdivheight/2));?>px;
 		position:absolute;
 		font-size:<?=($konstantabox-4);?>pt;font-family: calibri, serif;
 	}

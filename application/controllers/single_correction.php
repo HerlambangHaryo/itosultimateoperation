@@ -31,6 +31,7 @@ class Single_correction extends CI_Controller {
 
 		//debux($retval);die();
 
+
 		$query1 = "SELECT 
 			   		A.ID_OP_STATUS,
 			   		A.ID_VES_VOYAGE
@@ -41,8 +42,7 @@ class Single_correction extends CI_Controller {
 		$id_op_status = $ress->ID_OP_STATUS;
 
 		$text_message = "";
-
-		if($id_op_status == 'SLY'){
+		if($id_op_status=='SLY'){
 			$text_message = "Container Already Loaded";
 		}elseif($id_op_status=='OYS'){
 			$text_message = "Container Onchasis";
@@ -52,10 +52,11 @@ class Single_correction extends CI_Controller {
 			$text_message = "Error";
 		}
 
-		if($retval['ID_CLASS_CODE'] == 'I'){
+
+		if($retval['ID_CLASS_CODE']=='I'){
 			#container inbound
 			$validasi_req = $this->container->validasi_req_sp2($_POST['no_container'], $point);
-			if($validasi_req > 0){
+			if($validasi_req>0){
 				$data = array(
 					'success'=>false,
 					'errors'=>'container already request'
@@ -83,6 +84,7 @@ class Single_correction extends CI_Controller {
 				echo json_encode($data);
 				exit;
 			}
+
 		}
 		
 		$data = array(

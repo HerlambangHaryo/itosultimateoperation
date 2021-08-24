@@ -46,7 +46,7 @@ class Multiple_correction extends CI_Controller {
 		echo json_encode($data);
 	}
 
-		public function data_port($alias){
+	public function data_port($alias){
 		$filter = $_GET['query'];
 		$id_ves_voyage = $_GET['id_ves_voyage'];
 		$data	= $this->container->get_port_list_multiple($filter,$id_ves_voyage);

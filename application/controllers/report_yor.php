@@ -31,8 +31,9 @@ class Report_yor extends CI_Controller {
 			}
 			$i++;
 		}
-
-		$retval['data_detail'] = $temp;		
+		
+		$retval['data_detail'] = $temp;
+		
 		//debux($retval);
 
 		$this->load->view('templates/report/ete_report_yor', $retval);

@@ -11,12 +11,12 @@ $(function() {
 		},
 		autoLoad: true
 	});
-
+	
 	var block_list_store = Ext.create('Ext.data.Store', {
 		fields:['ID_BLOCK', 'BLOCK_NAME'],
 		proxy: {
 			type: 'ajax',
-			url: '<?=controller_?>yard_job_manager/data_block_list',
+			url: '<?=controller_?>yard_job_manager/data_block_list/<?=$id_yard?>',
 			reader: {
 				type: 'json'
 			}
@@ -28,7 +28,7 @@ $(function() {
 		fields:['slot'],
 		proxy: {
 			type: 'ajax',
-			url: '<?=controller_?>yard_job_manager/data_slot_list',
+			url: '<?=controller_?>yard_job_manager/data_slot_list/<?=$id_yard?>',
 			reader: {
 				type: 'json'
 			}
@@ -39,7 +39,7 @@ $(function() {
 		fields:['row'],
 		proxy: {
 			type: 'ajax',
-			url: '<?=controller_?>yard_job_manager/data_row_list',
+			url: '<?=controller_?>yard_job_manager/data_row_list/<?=$id_yard?>',
 			reader: {
 				type: 'json'
 			}
@@ -50,7 +50,7 @@ $(function() {
 		fields:['tier'],
 		proxy: {
 			type: 'ajax',
-			url: '<?=controller_?>yard_job_manager/data_tier_list',
+			url: '<?=controller_?>yard_job_manager/data_tier_list/<?=$id_yard?>',
 			reader: {
 				type: 'json'
 			}
@@ -62,7 +62,7 @@ $(function() {
 		modal: true,
 		title: 'Change Container Preferred Area',
 		closable: false,
-		width: 730,
+		width: 430,
 		items: [Ext.create('Ext.form.Panel', {
 			frame: true,
 			padding: 5,
@@ -74,16 +74,16 @@ $(function() {
 			layout: 'hbox',
 			items: [
 				{
-					id: "yard_<?=$tab_id?>",
+					id: "yard_<?=$tab_id?>", // yard
 					xtype: 'combo',
-					name: "yard_<?=$tab_id?>",
-					fieldLabel: 'Yard',
-					width: 230,
+					name: "yard_<?=$tab_id?>",  // yard
+					fieldLabel: 'Yard',  // yard
+					width: 100,
 					queryMode: 'local',
-					displayField: 'NAME',
-					valueField: 'ID_YARD',
+					displayField: 'YARD_NAME',  // yard
+					valueField: 'ID_YARD',  // yard
 					editable: false,
-					store: yard_list_store,
+					store: yard_list_store,  // yard
 					listeners: {
 						change: {
 							fn: function(){
@@ -96,21 +96,21 @@ $(function() {
 					},
 					allowBlank: false
 				},{
-					id: "block_<?=$tab_id?>",
+					id: "block_<?=$tab_id?>", // block
 					xtype: 'combo',
-					name: "block_<?=$tab_id?>",
-					fieldLabel: 'Block',
-					width: 150,
-					displayField: 'BLOCK_NAME',
-					valueField: 'ID_BLOCK',
+					name: "block_<?=$tab_id?>", // block
+					fieldLabel: 'Block', // block
+					width: 100,
+					displayField: 'block', // block
+					valueField: 'block', // block
 					editable: false,
-					store: block_list_store,
+					store: block_list_store, // block NEW
 					listeners: {
 						beforequery: {
 							fn: function(queryPlan){
-								var id_yard = Ext.getCmp("yard_<?=$tab_id?>").getValue();
-								if (id_yard){
-									queryPlan.query = id_yard;
+								var id_yard = Ext.getCmp("yard_<?=$tab_id?>").getValue(); // yard?
+								if (id_yard){ // yard?
+									queryPlan.query = id_yard; // yard?
 								}else{
 									return false;
 								}
@@ -132,7 +132,6 @@ $(function() {
 						beforequery: {
 							fn: function(queryPlan){
 								var id_block = Ext.getCmp("block_<?=$tab_id?>").getValue();
-								//alert(id_block);
 								if (id_block){
 									queryPlan.query = id_block;
 								}else{
@@ -156,7 +155,6 @@ $(function() {
 						beforequery: {
 							fn: function(queryPlan){
 								var id_block = Ext.getCmp("block_<?=$tab_id?>").getValue();
-								// alert(id_block);
 								if (id_block){
 									queryPlan.query = id_block;
 								}else{
@@ -197,7 +195,6 @@ $(function() {
 				handler: function() {
 					if (this.up('form').getForm().isValid()){
 						var form = this.up('form').getForm();
-						var id_yard = form.findField("yard_<?=$tab_id?>").getValue();
 						var id_block = form.findField("block_<?=$tab_id?>").getValue();
 						var block_name = form.findField("block_<?=$tab_id?>").getRawValue();
 						var slot = form.findField("slot_<?=$tab_id?>").getValue();
@@ -207,7 +204,6 @@ $(function() {
 						Ext.Ajax.request({
 							url: '<?=controller_?>yard_job_manager/save_change_PA/',
 							params: {
-								id_yard: id_yard,
 								id_block: id_block,
 								block_name: block_name,
 								slot: slot,

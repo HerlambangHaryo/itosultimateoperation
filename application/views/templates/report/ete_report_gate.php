@@ -32,13 +32,6 @@
 	<tr><td colspan='23' style='text-align: center; vertical-align:middle'>REPORT</td></tr>
 	<tr><td colspan='23' style='text-align: center; vertical-align:middle'>GATE</td></tr>
 	<tr><td colspan='23' style='text-align: center; vertical-align:middle'><?php echo date("Y-m-d H:i:s");?></td></tr>
-	<?php
-	if($COMPANY_NAME!='ALL PBM'){
-		echo"<tr><td colspan='23' style='text-align: center; vertical-align:middle'>".$COMPANY_NAME."</td></tr>";
-	}else{
-		echo"<tr><td colspan='23' style='text-align: center; vertical-align:middle'>ALL PBM</td></tr>";
-	}
-	?>
 </table>
 <table>
 </table>
@@ -47,9 +40,6 @@
 		<td style='text-align: center; vertical-align:middle'>
 			NO
 		</td>
-		<td style='text-align: center; vertical-align:middle'>
-			COMPANY
-		</td>		
 		<td style='text-align: center; vertical-align:middle'>
 			NO CONTAINER
 		</td>		
@@ -124,7 +114,6 @@
 	foreach ($data_detail as $row) {
 		echo "<tr style='text-align: center; vertical-align:middle;mso-number-format:\"\@\"'>";
 			echo "<td style='mso-number-format:\"\@\"'>" . $i++ . "</td>";
-			echo "<td style='mso-number-format:\"\@\"'>" . $row["COMPANY_NAME"] . "</td>";
 			echo "<td style='mso-number-format:\"\@\"'>" . $row["NO_CONTAINER"] . "</td>";
 			echo "<td style='mso-number-format:\"\@\"'>" . $row["CONT_SIZE"]. "</td>";
 			echo "<td style='mso-number-format:\"\@\"'>" . $row["CONT_TYPE"] . "</td>";

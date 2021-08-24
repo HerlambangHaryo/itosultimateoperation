@@ -84,8 +84,7 @@
 							  renderer: function(value, metaData, record, row, col, store, gridView){
 								  $dt=value.split(' hari');
 								return $dt[0] + ' hari';
-							  }
-							  , width: 200, filter: {type: 'numeric'}}
+							  } , width: 200, filter: {type: 'numeric'}}
 			],
 			// tbar: [
 			// 		{ xtype: 'button',

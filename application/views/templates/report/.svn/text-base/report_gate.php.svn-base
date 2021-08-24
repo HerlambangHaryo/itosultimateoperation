@@ -1,0 +1,280 @@
+<script type="text/javascript">
+	var required = '<span style="color:red;font-weight:bold" data-qtip="Required">*</span>';
+
+	var kegiatan_<?=$tab_id?> = Ext.create('Ext.data.Store', {
+		fields:['KEGIATAN', 'KEGIATAN_TEXT'],
+		data : [
+			 {KEGIATAN: 'I', KEGIATAN_TEXT: 'Inbound'},
+			 {KEGIATAN: 'O', KEGIATAN_TEXT: 'Outbound'}
+		]
+	});
+        
+        var vessel_<?=$tab_id?> = Ext.create('Ext.data.Store', {
+		fields:['ID_VESSEL', 'VESSEL_NAME'],
+		proxy: {
+			type: 'ajax',
+			url: '<?=controller_?>report_gate/data_vessel/',
+			reader: {
+				type: 'json'
+			}
+		},
+		autoLoad: true
+	});
+        
+        var pbm_<?=$tab_id?> = Ext.create('Ext.data.Store', {
+		fields:['ID_COMPANY', 'COMPANY_NAME'],
+		proxy: {
+			type: 'ajax',
+			url: '<?=controller_?>report_gate/data_pbm/',
+			reader: {
+				type: 'json'
+			}
+		},
+		autoLoad: true
+	});
+        
+	var shipping_line_<?=$tab_id?> = Ext.create('Ext.data.Store', {
+		fields:['LINE', 'LINE_TEXT'],
+		data : [
+			 // {LINE: 'O', LINE_TEXT: 'Ocean Going'},
+			 {LINE: 'I', LINE_TEXT: 'Intersuler'}
+		]
+	});
+
+	var esy_<?=$tab_id?> = Ext.create('Ext.data.Store', {
+		fields:['ESY', 'ESY_TEXT'],
+		data : [
+			 {ESY: 'N', ESY_TEXT: 'N'},
+			 {ESY: 'Y', ESY_TEXT: 'Y'}
+		]
+	});
+
+	var gate_<?=$tab_id?> = Ext.create('Ext.data.Store', {
+		fields:['GATE', 'GATE_TEXT'],
+		data : [
+			 {GATE: '', GATE_TEXT: 'All'},
+			 {GATE: 'Gate In', GATE_TEXT: 'Gate In'},
+			 {GATE: 'Gate Out', GATE_TEXT: 'Gate Out'}
+		]
+	});
+
+	Ext.create('Ext.form.Panel', {
+		id: "gate_in_out_form_<?=$tab_id?>",
+		bodyPadding: 5,
+		fieldDefaults: {
+			labelAlign: 'left',
+			labelWidth: 100
+		},
+		url: '<?=controller_?>report_gate/get_data_gate?tab_id=<?=$tab_id?>',
+		items: [{
+			xtype: 'fieldcontainer',
+			fieldLabel: 'Truck In',
+			layout: 'hbox',
+			combineErrors: true,
+			defaultType: 'textfield',
+			defaults: {
+				hideLabel:'true'
+			},
+			items: [{
+					id: "date_in_<?=$tab_id?>",
+					xtype: 'datefield',
+					name: "DATE_IN",
+					fieldLabel: 'Date',
+					emptyText: 'Date',
+					format: 'd-m-Y',
+					width: 120,
+					editable: false,
+					afterLabelTextTpl: required,
+					allowBlank: false
+				},{
+					id: "hour_in_<?=$tab_id?>",
+					xtype: 'textfield',
+					name: "HOUR_IN",
+					fieldLabel: 'Hour',
+					minLength: 1,
+					maxLength: 2,
+					enforceMaxLength: true,
+					width: 50,
+					maskRe: /[\d]/,
+					regex: /^([0,1]?\d|2[0-3])$/,
+					regexText: 'Value of this field must between 0-23',
+					afterLabelTextTpl: required,
+					allowBlank: false
+				},{
+					id: "min_in_<?=$tab_id?>",
+					xtype: 'textfield',
+					name: "MIN_IN",
+					fieldLabel: 'Minute',
+					minLength: 1,
+					maxLength: 2,
+					enforceMaxLength: true,
+					width: 50,
+					maskRe: /[\d]/,
+					regex: /^([0-5]?\d)$/,
+					regexText: 'Value of this field must between 0-59',
+					afterLabelTextTpl: required,
+					allowBlank: false
+				}]
+		},{
+			xtype: 'fieldcontainer',
+			fieldLabel: 'Truck Out',
+			layout: 'hbox',
+			combineErrors: true,
+			defaultType: 'textfield',
+			defaults: {
+				hideLabel: 'true'
+			},
+			items: [{
+				id: "date_out_<?=$tab_id?>",
+				xtype: 'datefield',
+				name: "DATE_OUT",
+				fieldLabel: 'Date',
+				emptyText: 'Date',
+				format: 'd-m-Y',
+				width: 120,
+				editable: false,
+				afterLabelTextTpl: required,
+				allowBlank: false
+			},{
+				id: "hour_out_<?=$tab_id?>",
+				xtype: 'textfield',
+				name: "HOUR_OUT",
+				fieldLabel: 'Hour',
+				minLength: 1,
+				maxLength: 2,
+				enforceMaxLength: true,
+				width: 50,
+				maskRe: /[\d]/,
+				regex: /^([0,1]?\d|2[0-3])$/,
+				regexText: 'Value of this field must between 0-23',
+				afterLabelTextTpl: required,
+				allowBlank: false
+			},{
+				id: "min_out_<?=$tab_id?>",
+				xtype: 'textfield',
+				name: "MIN_OUT",
+				fieldLabel: 'Minute',
+				minLength: 1,
+				maxLength: 2,
+				enforceMaxLength: true,
+				width: 50,
+				maskRe: /[\d]/,
+				regex: /^([0-5]?\d)$/,
+				regexText: 'Value of this field must between 0-59',
+				afterLabelTextTpl: required,
+				allowBlank: false
+			}]
+		},
+                {
+			id: "vessel_<?=$tab_id?>",
+			xtype: 'combo',
+			displayField: 'VESSEL_NAME',
+			valueField: 'ID_VESSEL',
+			emptyText: 'VESSEL',
+			editable: false,
+			store: vessel_<?=$tab_id?>,
+			name: "VESSEL",
+			fieldLabel: 'Vessel',
+			allowBlank: true,
+			width: 325,
+		},
+        /*{
+			id: "pbm_<?=$tab_id?>",
+			xtype: 'combo',
+			displayField: 'COMPANY_NAME',
+			valueField: 'ID_COMPANY',
+			emptyText: 'PBM',
+			editable: false,
+			store: pbm_<?=$tab_id?>,
+			name: "PBM",
+			fieldLabel: 'PBM',
+			allowBlank: true,
+			width: 325,
+		},*/
+		{
+			id: "kegiatan_<?=$tab_id?>",
+			xtype: 'combo',
+			displayField: 'KEGIATAN_TEXT',
+			valueField: 'KEGIATAN',
+			queryMode: 'local',
+			emptyText: 'Jenis Kegiatan',
+			editable: false,
+			store: kegiatan_<?=$tab_id?>,
+			name: "JENIS_KEGIATAN",
+			fieldLabel: 'Jenis Kegiatan',
+			allowBlank: true,
+			width: 325,
+		},
+		/*{
+			id: "shipping_line_<?=$tab_id?>",
+			xtype: 'combo',
+			displayField: 'LINE_TEXT',
+			valueField: 'LINE',
+			queryMode: 'local',
+			emptyText: 'Shipping Line',
+			editable: false,
+			store: shipping_line_<?=$tab_id?>,
+			name: "SHIPPING_LINE",
+			fieldLabel: 'Shipping',
+			allowBlank: true,
+			width: 325,
+		},*/
+		{
+			id: "esy_<?=$tab_id?>",
+			xtype: 'combo',
+			displayField: 'ESY_TEXT',
+			valueField: 'ESY',
+			queryMode: 'local',
+			emptyText: 'ESY',
+			editable: false,
+			store: esy_<?=$tab_id?>,
+			name: "ESY",
+			fieldLabel: 'ESY',
+			allowBlank: true,
+			width: 325,
+		},
+		{
+			id: "gate_<?=$tab_id?>",
+			xtype: 'combo',
+			displayField: 'GATE_TEXT',
+			valueField: 'GATE',
+			queryMode: 'local',
+			emptyText: 'Gate In / Out',
+			editable: false,
+			store: gate_<?=$tab_id?>,
+			name: "GATE",
+			fieldLabel: 'Gate In / Out',
+			allowBlank: true,
+			width: 325,
+		}
+
+		],
+		buttons: [{
+			text: 'Export to Excel',
+			formBind: true,
+			handler: function() {
+				var date_in = $('#date_in_<?=$tab_id?>-inputEl').val() + ' ' + $('#hour_in_<?=$tab_id?>-inputEl').val() +'.' + $('#min_in_<?=$tab_id?>-inputEl').val();
+                            var date_out = $('#date_out_<?=$tab_id?>-inputEl').val() + ' ' + $('#hour_out_<?=$tab_id?>-inputEl').val() +'.' + $('#min_out_<?=$tab_id?>-inputEl').val();
+                            var kegiatan = $('#kegiatan_<?=$tab_id?>-inputEl').val();
+                            // var shipping_line = $('#shipping_line_<?=$tab_id?>-inputEl').val();
+                            var esy = $('#esy_<?=$tab_id?>-inputEl').val();
+                            var gate = $('#gate_<?=$tab_id?>-inputEl').val();
+                            var vessel = $('#vessel_<?=$tab_id?>-inputEl').val();
+                            // var pbm = $('#pbm_<?=$tab_id?>-inputEl').val();
+
+                            /*var url = '<?=controller_?>report_gate/get_data_gate?DATE_GATE_IN='+date_in+'&DATE_GATE_OUT='+date_out+
+                            '&KEGIATAN='+kegiatan+'&SHIPPING_LINE='+shipping_line+'&ESY='+esy+'&GATE='+gate+'&VESSEL='+vessel+'&pbm='+pbm;*/
+
+                            var url = '<?=controller_?>report_gate/get_data_gate?DATE_GATE_IN='+date_in+'&DATE_GATE_OUT='+date_out+
+                            '&KEGIATAN='+kegiatan+'&ESY='+esy+'&GATE='+gate+'&VESSEL='+vessel;
+
+                            window.open(url,'_blank');
+			}
+		}]
+	}).render('gate_in_out_<?=$tab_id?>');
+	
+	$(document).ready(function (){
+		
+	});
+</script>
+<div id="gate_in_out_<?=$tab_id?>"></div>

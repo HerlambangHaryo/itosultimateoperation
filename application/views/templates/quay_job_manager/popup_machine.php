@@ -57,8 +57,7 @@ $(function() {
 				labelAlign: 'left',
 				labelWidth: 100
 			},
-			items: [
-			{
+			items: [{
 				id: "machine_<?=$tab_id?>",
 				xtype: 'combo',
 				name: "machine_<?=$tab_id?>",
@@ -69,9 +68,7 @@ $(function() {
 				editable: false,
 				store: quay_machine_list_store_<?=$tab_id?>,
 				allowBlank: false
-			},
-			
-			{
+			},{
 				id: "driver_<?=$tab_id?>",
 				xtype: 'combo',
 				name: "driver_<?=$tab_id?>",
@@ -82,9 +79,7 @@ $(function() {
 				editable: false,
 				store: qc_operator_list_store_<?=$tab_id?>,
 				allowBlank: false
-			},
-			
-			{
+			},{
 				id: "itv_<?=$tab_id?>",
 				xtype: 'combo',
 				name: "itv_<?=$tab_id?>",
@@ -95,8 +90,7 @@ $(function() {
 				editable: false,
 				store: itv_machine_list_store_<?=$tab_id?>,
 				allowBlank: false
-			}
-			,{
+			},{
 				id: "stowage_<?=$tab_id?>",
 				xtype: 'textfield',
 				name: "stowage_<?=$tab_id?>",
@@ -106,8 +100,7 @@ $(function() {
 				maskRe: /[\d]/,
 				regex: /^([\d]{6,7})$/,
 				allowBlank: false
-			}
-			],
+			}],
 			buttons: [{
 				text: 'Save',
 				formBind: true,
