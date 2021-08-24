@@ -1,0 +1,552 @@
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+
+session_start();
+
+class Inbound_view extends CI_Controller {
+	public function __construct(){
+		parent::__construct();
+		$this->load->helper('url'); 
+		$this->load->helper('form');
+		$this->load->library('form_validation');
+		$this->load->model(array('vessel','gtools'));
+		$this->load->model('container');
+		$this->load->library('session');
+	}
+	
+	public function index(){
+	    $data['tab_id'] = $_GET['tab_id'];
+	    $data['id_ves_voyage'] = $_POST['data_id'];
+
+	    if ($data['id_ves_voyage']!=''){
+			$data['vessel'] = $this->vessel->get_vessel_profile_info($data['id_ves_voyage']);
+			$data['ID_VESSEL'] = $data['vessel']['ID_VESSEL'];
+			$data['bay_area'] = $this->vessel->get_vessel_profile_bayArea($data['ID_VESSEL']);
+			$data['class_code'] = 'I';
+
+			$data['vessel_posisi'] = $this->vessel->get_vesselposisi_toprint($data['ID_VESSEL']);
+			$this->load->view('templates/inbound_view/viewer_panel', $data);
+			$this->load->view('templates/inbound_view/inbound_view', $data);
+	    }
+	}
+
+	public function refresh_index($tab_id, $id_ves_voyage){
+		$data['tab_id'] = $_GET['tab_id'];
+		$data['id_ves_voyage'] = $_GET['id_ves_voyage'];
+		if ($data['id_ves_voyage']!=''){
+			$data['vessel'] = $this->vessel->get_vessel_profile_info($data['id_ves_voyage']);
+			$data['ID_VESSEL'] = $data['vessel']['ID_VESSEL'];
+			$data['bay_area'] = $this->vessel->get_vessel_profile_bayArea($data['ID_VESSEL']);
+			$data['class_code'] = 'I';
+			
+			$data['vessel_posisi'] = $this->vessel->get_vesselposisi_toprint($data['ID_VESSEL']);
+			$this->load->view('templates/inbound_view/viewer_panel', $data);
+			$this->load->view('templates/inbound_view/inbound_view', $data);
+		}
+	}
+	
+	public function set_sequence(){
+		$id_ves_voyage = $_POST['id_ves_voyage'];
+		$id_bay = $_POST['id_bay'];
+		$deck_hatch = $_POST['deck_hatch'];
+		$xml_str = $_POST['xml_'];
+		// echo $xml_str."<br/>";
+		$retval = $this->container->insert_container_working_sequence_inbound($id_ves_voyage, $id_bay, $deck_hatch, $xml_str);
+		echo $retval;
+	}
+	
+	public function unset_sequence(){
+		$id_ves_voyage = $_POST['id_ves_voyage'];
+		$id_bay = $_POST['id_bay'];
+		$deck_hatch = $_POST['deck_hatch'];
+		$xml_str = $_POST['xml_'];
+		// echo $xml_str."<br/>";
+		$retval = $this->container->delete_container_working_sequence_inbound($id_ves_voyage, $id_bay, $deck_hatch, $xml_str);
+		echo $retval;
+	}
+	
+	public function print_all_bay($vescode,$id_ves_voyage,$tabid){
+		// print_r($vescode." ");
+		// print_r($id_ves_voyage." ");
+		// die;
+		
+		$data['tab_id'] = $tabid;
+		$data['id_ves_voyage'] = $id_ves_voyage;
+		$data['vesselLD'] = $this->vessel->get_vessel_profile_info($id_ves_voyage);
+		
+		$data['ID_VESSEL'] = $vescode;
+		$data['bay_area'] = $this->vessel->get_vessel_profile_bayArea($vescode);
+		$data['class_code'] = 'I';
+		
+		$data['vessel_posisi'] = $this->vessel->get_vesselposisi_toprint($vescode);
+		$this->load->view('templates/inbound_view/to_prntAll', $data);
+	}
+
+	public function print_all_bayNew($vescode,$id_ves_voyage,$tabid,$ei){
+		
+		$data['tab_id'] = $tabid;
+		$data['id_ves_voyage'] = $id_ves_voyage;
+		$data['vesselLD'] = $this->vessel->get_vessel_profile_info($id_ves_voyage);
+		
+		$data['ID_VESSEL'] = $vescode;
+		$data['bay_area'] = $this->vessel->get_vessel_profile_bayAreaNew($vescode);
+		$data['maxRow']=$this->vessel->getMaxRowProfile($vescode);
+		
+		// assign shape for machines
+		$data['all_mch']=$this->vessel->get_list_machine($id_ves_voyage, $ei);
+		$assigned_shape = array();
+		$assigned_mch_name = array();
+		$list_shape = array('rectangle', 'circle', 'triangle-up', 'triangle-down');
+		$counter_shape = 0;
+		foreach($data['all_mch'] as $data_mch){
+			$assigned_shape[$data_mch['ID_MACHINE']] = $list_shape[$counter_shape];
+			$assigned_mch_name[$counter_shape] = $data_mch['MCH_NAME'];
+			$counter_shape++;
+		}
+		$data['assigned_shape'] = $assigned_shape;
+		$data['assigned_mch_name'] = $assigned_mch_name;
+		// var_dump($assigned_shape);
+		
+		// $data['all_plan']=$this->vessel->get_machine_all_plan($id_ves_voyage, $ei);
+		
+		$data['class_code'] = $ei;
+		
+		$data['vessel_posisi'] = $this->vessel->get_vesselposisi_toprint($vescode);
+
+		//debux($data);die;
+
+		$this->load->view('templates/inbound_view/to_printAllNew', $data);
+	}
+	
+	public function print_allhatch_bayNew($vescode,$id_ves_voyage,$tabid,$ei){
+		
+		$data['tab_id'] = $tabid;
+		$data['id_ves_voyage'] = $id_ves_voyage;
+		$data['vesselLD'] = $this->vessel->get_vessel_profile_info($id_ves_voyage);
+		
+		$data['ID_VESSEL'] = $vescode;
+		$data['bay_area'] = $this->vessel->get_vessel_profile_bayAreaNew($vescode);
+		$data['maxRow']=$this->vessel->getMaxRowProfile($vescode);
+		
+		// assign shape for machines
+		$data['all_mch']=$this->vessel->get_list_machine($id_ves_voyage, $ei);
+		$assigned_shape = array();
+		$assigned_mch_name = array();
+		$list_shape = array('rectangle', 'circle', 'triangle-up', 'triangle-down');
+		$counter_shape = 0;
+		foreach($data['all_mch'] as $data_mch){
+			$assigned_shape[$data_mch['ID_MACHINE']] = $list_shape[$counter_shape];
+			$assigned_mch_name[$counter_shape] = $data_mch['MCH_NAME'];
+			$counter_shape++;
+		}
+		$data['assigned_shape'] = $assigned_shape;
+		$data['assigned_mch_name'] = $assigned_mch_name;
+		// var_dump($assigned_shape);
+		
+		// $data['all_plan']=$this->vessel->get_machine_all_plan($id_ves_voyage, $ei);
+		
+		$data['class_code'] = $ei;
+		
+		$data['vessel_posisi'] = $this->vessel->get_vesselposisi_toprint($vescode);
+		$this->load->view('templates/inbound_view/to_printAllHatchNew', $data);
+	}
+	
+	public function print_bay($vescode,$id_ves_voyage,$idbay,$deck_hatch,$nobay,$posisibay)
+	{
+		// print_r($vescode." ");
+		// print_r($id_ves_voyage." ");
+		// print_r($deck_hatch);
+		// die;
+
+		require_once('tcpdf/config/lang/eng.php');
+		require_once('tcpdf/tcpdf.php');
+
+		// create new PDF document
+		$pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+
+		// set document information
+		$pdf->SetCreator(PDF_CREATOR);
+		$pdf->SetAuthor('IPC');
+		$pdf->SetTitle('Stowage');
+		$pdf->SetSubject('Stowage');
+		$pdf->SetKeywords('Stowage, IPC, !TOS');
+
+		// set default header data
+		//$pdf->SetHeaderData(PDF_HEADER_LOGO, PDF_HEADER_LOGO_WIDTH, PDF_HEADER_TITLE.' 048', PDF_HEADER_STRING);
+
+		// remove default header/footer
+		$pdf->setPrintHeader(false);
+		$pdf->setPrintFooter(false);
+
+		// set header and footer fonts
+		//$pdf->setHeaderFont(Array(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN));
+		//$pdf->setFooterFont(Array(PDF_FONT_NAME_DATA, '', PDF_FONT_SIZE_DATA));
+
+		// set default monospaced font
+		$pdf->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
+
+		//set margins
+		$pdf->SetMargins($left = 4,
+						 $top,
+						 $right = 4,
+						 $keepmargins = false );
+		$pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
+		$pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
+
+		//set auto page breaks
+		$pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
+
+		//set image scale factor
+		$pdf->setImageScale(PDF_IMAGE_SCALE_RATIO);
+
+		//set some language-dependent strings
+		$pdf->setLanguageArray($l);
+
+		// ---------------------------------------------------------
+
+		// set font
+		//$pdf->SetFont('courier', 'B', 20);
+
+		// add a page
+		$pdf->AddPage();
+
+		//$pdf->Write(0, 'Example of HTML tables', '', 0, 'L', true, 0, false, false, 0);
+
+		$pdf->SetFont('helvetica', '', 8);
+		$pdf->setPageOrientation('p');
+
+		$id_vs = $id_ves_voyage;
+		$id_bay = $idbay;
+		$no_bay = $nobay;
+		$pss_bay = trim($deck_hatch);
+		$id_user = $this->session->userdata('id_user');	
+
+		//======================= Header ===========================//
+
+		$header = $this->vessel->stowage_header_print($vescode,$id_ves_voyage);
+		$plan_mch = $this->vessel->get_machine_plan($vescode, $id_ves_voyage, 'I', $idbay);
+		//var_dump($plan_mch); die;
+		foreach ($header as $row_header)
+		{
+			$vessel = $row_header['VESSEL_NAME'];
+			$voyage = $row_header['VOYAGE'];
+		}
+
+		//======================= Header ===========================//
+
+		$html = '<b>BAYPLAN INBOUND</b> ['.date('Y-m-d H:i:s').']
+				<hr/>
+				<br/>
+				<div align="right">'.$vessel.' ['.$voyage.']</div>
+				<br/>
+				<div align="center"><b>BAY '.$no_bay.' '.$posisibay.'</b></div>';
+				
+				$vesinfo = $this->vessel->stowage_print_vesinfo($vescode,$id_ves_voyage,$id_bay);
+				foreach ($vesinfo as $row_vesinfo)
+				{
+					$jumlah_row = $row_vesinfo['JML_ROW'];
+					$jml_tier_under = $row_vesinfo['JML_TIER_UNDER'];
+					$jml_tier_on = $row_vesinfo['JML_TIER_ON'];
+					$bay_occ = $row_vesinfo['OCCUPY'];
+					$width = $jumlah_row+1;
+				}
+					
+					if($pss_bay=='D')
+					{
+						$height = $jml_tier_on+2;
+					}
+					else
+					{
+						$height = $jml_tier_under+2;
+					}
+		$szbox=54;
+		$ftsz=5.5;
+		$html .= '<style>
+						
+						.allocation  {
+							width : '.$szbox.'px;
+							height : '.$szbox.'px;
+							font-size : '.$ftsz.'pt; 
+							font-family : verdana; 
+							border : 1px solid #FFFFFF;
+							background-color:#D6D6C2;
+						}
+						.allocation2  {
+							width : '.$szbox.'px;
+							height : '.$szbox.'px;
+							font-size : '.$ftsz.'pt; 
+							font-family : verdana; 
+							border : 1px solid #FFFFFF;
+							background-color:#f0d048;
+						}
+						.allocationplan  {
+							width : '.$szbox.'px;
+							height : '.$szbox.'px;
+							font-size : '.$ftsz.'pt; 
+							font-family : verdana; 
+							border : 1px solid #FFFFFF;
+							background-color:#819ede;
+						}
+						.alat  {
+							padding: 15px;
+							width : '.$szbox.'px;
+							height : '.$szbox.'px;
+							font-size : 8pt; 
+							font-family : verdana; 
+							border : 1px solid #FFFFFF;
+							background-color:#4679BD;
+						}
+						.big_font {
+							font-size: 12pt;
+						}
+						.allocationX{
+							width : '.$szbox.'px;
+							height : '.$szbox.'px;
+							font-size : '.$ftsz.'pt; 
+							border : 1px solid #000000;
+							background-color:#f0d048;
+						}
+						.label  {
+							width : '.$szbox.'px;
+							height : '.($szbox/2).'px;
+							font-size : 8pt; 
+							font-family : verdana;
+						}
+						.general  {
+							width : '.$szbox.'px;
+							height : '.$szbox.'px;
+							font-size : '.$ftsz.'pt; 
+							font-family : verdana; 
+							border : 1px solid #FFFFFF;
+							background-color:#FFFFFF;
+						}
+						.palka  {
+							width : '.$szbox.'px;
+							height :'.($szbox/2).'px;
+							font-size : '.$ftsz.'pt; 
+							font-family : verdana; 
+							border : 1px solid #0079a3;
+							background-color:#0B3861;
+						}
+						
+						.corner-left-label{
+						    left: 0;
+						    top: -1px;
+						}
+				</style>
+				  <br/>
+				  <center>
+				  <table align="center">
+				  <tbody>
+					<tr align="center">';
+					
+					$n='';
+					$br='';
+					$tr='';
+					
+					$html .= '<td align="center">
+							  <table align="center">
+								<tbody>
+								<tr>
+									<td colspan="'.($jumlah_row+1).'" align="left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+								</tr>';
+							
+							for($t=1;$t<=$height;$t++)
+							{
+								$html .= '<tr>';
+								for($r=1;$r<=($jumlah_row+1);$r++)
+								{
+									if($pss_bay=='D')
+									{
+										$index_cell = (($t-1)*($jumlah_row+1))+$r;
+									}
+									else
+									{
+										$index_cell = (($t-1)*($jumlah_row+1))+$r+($jml_tier_on*$width);
+									}
+									$cell_number = $index_cell-1;
+
+									$vesbay_cell = $this->vessel->stowage_print_vescell($id_bay,$cell_number,$pss_bay);
+									foreach ($vesbay_cell as $row_vescell)
+									{
+										$id_cellx = $row_vescell['ID'];
+										$br = $n;
+										$tr = $row_vescell['TIER_'];
+										$n = $tr;
+										$pss_stack = $row_vescell['POSISI_STACK'];
+										$stat_stack = $row_vescell['STATUS_STACK'];
+										$row_bay = $row_vescell['ROW_'];
+									}
+									
+									if($pss_bay=='D')
+									{
+										$cellx = $cell_number-(2*$width);
+									}
+									else
+									{
+										$cellx = $cell_number-(1*$width);
+									}
+									$rowbay_cell = $this->vessel->stowage_print_vescell($id_bay,$cellx,$pss_bay);
+									foreach ($rowbay_cell as $rowbay)
+									{
+										$rowbays = $rowbay['ROW_'];
+									}
+									
+									if($pss_stack=='HATCH')
+									{
+										if($index_cell%($jumlah_row+1)==0)
+										{
+											$html .= '<td class="label">&nbsp;</td>';
+										}
+										else if(($cell_number>(($jumlah_row+1)*($height-1))-1)&&($pss_bay=='D'))
+										{
+											if($cell_number==($width*$height)-1)
+											{
+												$html .= '<td class="label">&nbsp;</td>';
+											}
+											else
+											{
+												$html .= '<td class="label"><br><br>'.$rowbays.'</td>';
+											}
+										}
+										else
+										{
+											$html .= '<td class="palka">&nbsp;</td>';
+										}
+									}
+									else if($cell_number>((($jumlah_row+1)*($jml_tier_on+$jml_tier_under+1))-1))
+									{
+										if($cell_number==($width*($jml_tier_on+$jml_tier_under+2))-1)
+										{
+											$html .= '<td class="label">&nbsp;</td>';
+										}
+										else
+										{
+											$html .= '<td class="label"><br><br>'.$rowbays.'</td>';
+										}
+									}
+									else if($index_cell%($jumlah_row+1)==0)
+									{
+										$html .= '<td class="label">&nbsp;<br/><br/>'.$br.'</td>';
+									}
+									else
+									{
+										if(($stat_stack=='A')||($stat_stack=='P')||($stat_stack=='R'))
+										{
+											$vescont = $this->vessel->stowage_print_vescont_imp($id_vs,$id_cellx);
+											$data_cont = explode("^",$vescont);
+											//debux($data_cont);
+											$by = $data_cont[0];
+											$nocont = $data_cont[1];
+											$sz = $data_cont[2];
+											$ty = $data_cont[3];
+											$pod = $data_cont[4];
+											$pol = $data_cont[5];
+											$carrier = $data_cont[6];
+											$gross = $data_cont[7];
+											$ht = $data_cont[8];
+											$isocode = $data_cont[9];
+											$st = $data_cont[10];
+											$vsbay = $data_cont[11];
+											$ydloc = $data_cont[12];
+											$vstatusdisch = $data_cont[13];
+											$tl_flag = $data_cont[14];
+											$commodity = $data_cont[15];
+											
+
+											if(($sz=='40')&&($bay_occ=='T'))
+											{
+												$html .= '<td class="allocation">&nbsp;<br/>&nbsp;<br/>&nbsp;<br/>+++</td>';
+											}
+											else
+											{
+												if (($sz=='40')&&($no_bay<>$vsbay))
+												{
+													$classor='allocationX';
+													$isi='<img src="images/cross.jpg" />';
+												}
+												else if(($nocont<>'')&&($no_bay==$vsbay)){
+													if($vstatusdisch=='C')
+													{
+														$classor='allocation2';
+														$isi='<br/>'.$pol.'&nbsp;&nbsp;&nbsp;'.$pod.'<br/><b>'.$nocont.'</b><br/>'.$carrier.'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.$gross.'<br/>'.$sz.$ty.'&nbsp;&nbsp;'.$commodity.'&nbsp;&nbsp;&nbsp;'.$ht.
+														'<br/>'.$ydloc;	
+													}
+													else
+													{
+														$classor='allocationplan';
+														$isi='<br/>'.$pol.'&nbsp;&nbsp;&nbsp;'.$pod.'<br/><b>'.$nocont.'</b><br/>'.$carrier.'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.$gross.'<br/>'.$sz.$ty.'&nbsp;&nbsp;'.$commodity.'&nbsp;&nbsp;&nbsp;'.$ht.
+														'<br/>'.$ydloc;
+													}
+												}
+												else
+												{
+													$classor='allocation';
+													$isi='';
+												}
+												$tl_flag_html = '';
+												if($tl_flag == 'Y'){
+												    $tl_flag_html = '<div class="corner-left-label">&#10041;</div>';
+												}
+												$html .= '<td class="'.$classor.'" valign="center">'.$tl_flag_html.$isi.'</td>';
+											}
+										}
+										else
+										{
+											$html .= '<td class="general">&nbsp;</td>';
+										}
+									}
+								}
+								$html .= '</tr>';
+							}
+							$html .= '</tbody>
+									  </table>
+									  </td>';
+									
+						    // alokasi alat
+							$data_html = '';
+							foreach($plan_mch as $data_row){
+								$data_html = $data_html . '<tr><td class="alat" valign="center" align="center"> '
+									. $data_row['MCH_NAME'] .'<br /><span class="big_font">'. $data_row['SEQUENCE'] . '</span> </td></tr>';
+							}
+							$html .= '<td align="center">
+								<table align="center">
+									<tbody>'.$data_html.'
+									</tbody>
+								</table>	
+							</td>';
+						   
+				 $html .= '</tr>
+						  </tbody>
+						  </table>
+						  </center>';
+				
+		echo $html; die;
+		// Print text using writeHTMLCell()
+		$pdf->writeHTMLCell($w=0, $h=0, $x='', $y='', $html, $border=0, $ln=1, $fill=0, $reseth=true, $align='', $autopadding=true);
+
+		// ---------------------------------------------------------
+
+		//Close and output PDF document
+		$pdf->Output('print_bayplan.pdf', 'I');
+
+		//============================================================+
+		// END OF FILE												
+		//============================================================+
+	}
+	
+	public function print_bay_all($vescode,$id_ves_voyage,$tabid,$ei)
+	{
+		$data['tab_id'] = $tabid;
+		$data['id_ves_voyage'] = $id_ves_voyage;
+		$data['vesselLD'] = $this->vessel->get_vessel_profile_info($id_ves_voyage);
+		
+		$data['ID_VESSEL'] = $vescode;
+		$data['bay_area'] = $this->vessel->get_vessel_profile_bayAreaNew($vescode);
+		$data['maxRow']=$this->vessel->getMaxRowProfile($vescode);
+		
+		$data['class_code'] = $ei;
+		
+		$data['vessel_posisi'] = $this->vessel->get_vesselposisi_toprint($vescode);
+		$this->load->view('templates/inbound_view/to_printAllBayCont', $data);
+	}
+}

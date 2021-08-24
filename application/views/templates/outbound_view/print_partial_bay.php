@@ -291,9 +291,7 @@
 											$pod_color = $id_class_code == 'TC' ? 'CCCCCC' : $cell['BACKGROUND_COLOR'];
 											$pod_fontcolor = $id_class_code == 'TC' ? 'CCCCCC' : $cell['FOREGROUND_COLOR'];
 											$ydloc = ($cell['ITT_FLAG'] == 'Y' || $cell['TL_FLAG']=='Y') ? '--' : $ydloc;
-											if ($cell['SEQUENCE']!=''){
-												$sequence = $cell['STATUS']=='P' ?  $cell['SEQUENCE']: 'C';
-											}
+											
 											
 											if(($sz=='40')&&($bay_occ=='T'))
 											{
@@ -312,7 +310,6 @@
 													$line1 = ($id_class_code=='E') ? '' : $id_class_code;
 													$line1 = $id_class_code;
 													// if($tl_flag == 'Y'){
-														$line1 .= ' <span style="font-weight:bold">'.$sequence.'</span> ';
 														$line1 .= ''.$tl_flag.''.$esy;
 													// }
 													

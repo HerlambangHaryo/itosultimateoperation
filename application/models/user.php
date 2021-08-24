@@ -25,7 +25,6 @@ class User extends CI_Model {
 	$id_user_group = $data['ID_USER_GROUP'] != '' ? $data['ID_USER_GROUP'] : '*';
 
 	$param = array("%," . $id_user_group . ",%");
-
 	$query = "SELECT *
 						FROM
 							M_USER_MENU
@@ -73,18 +72,13 @@ class User extends CI_Model {
 	return $msg;
     }
 
-    function get_data_operator($role) 
-    {
-		$query 	= "SELECT 
-					ID_USER, FULL_NAME
-				FROM 
-					M_USERS
-				WHERE 
-					$role = 'Y'";
-
-		$rs 	= $this->db->query($query);
-		$data 	= $rs->result_array();
-		return $data;
+    function get_data_operator($role) {
+	$query = "SELECT ID_USER, FULL_NAME
+					FROM M_USERS
+					WHERE $role='Y'";
+	$rs = $this->db->query($query);
+	$data = $rs->result_array();
+	return $data;
     }
 
     public function get_users($paging = false, $sort = false, $filters = false) {

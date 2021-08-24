@@ -11,7 +11,7 @@
 		},
 		autoLoad: true
 	});
-	
+
 	var data_operator_<?=$tab_id?> = Ext.create('Ext.data.Store', {
 		fields:['ID_USER', 'FULL_NAME'],
 		proxy: {

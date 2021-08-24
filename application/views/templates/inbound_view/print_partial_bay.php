@@ -67,9 +67,6 @@
 			$vessel = $row_header['VESSEL_NAME'];
 			$voyage = $row_header['VOYAGE'];
 		}
-		$putih=0;
-		$palka=0;
-
 		$sideInfoL = '';
 		$sideInfoR = '';
 		if($vesselLD['ALONG_SIDE'] == 'P'){ 
@@ -164,20 +161,12 @@
 									else
 									{	
 										$summary_weight = $this->vessel->summary_weight($id_ves_voyage,$no_bay,$row_bay,$pss_bay)->TOTAL;
-										$row = str_pad($row_bay,2,'0',STR_PAD_LEFT);
-										$count_row = $this->vessel->get_count_row($vescode, $id_bay,$row,$posisibay);
-										if($count_row->JML < 1){
-											$status_row_hid = 'display-none';
-										} else {
-											$status_row_hid = '';
-											$palka++;
-										}
-										$html .= '<td class="label '.$status_row_hid.'">'.$row.'<br />'.$summary_weight.'</td>';
+									
+										$html .= '<td class="label">'.str_pad($row_bay,2,'0',STR_PAD_LEFT).'<br />'.$summary_weight.'</td>';
 									}
 								}
-							}	
+							}
 					$html .= ' </tr>';
-					
 							for($t=1;$t<=$height;$t++)
 							{
 								$html .= '<tr>';
@@ -213,8 +202,7 @@
 										}
 										else
 										{
-											$status_palka_hid = ($palka<$r) ? 'display-none' : '';
-											$html .= '<td class="palka '.$status_palka_hid.'"></td>';
+											$html .= '<td class="palka"></td>';
 										}
 									}
 									else if($cell_number>(($jumlah_row+1)*($jml_tier_on+$jml_tier_under+2)))
@@ -225,14 +213,12 @@
 										}
 										else
 										{
-											$html .= '<td class="label"> '.$row_bay.'</td>';
+											$html .= '<td class="label">'.$row_bay.'</td>';
 										}
 									}
 									else if($index_cell%($jumlah_row+1)==0)
 									{
-										$status_tier_hid = ($putih==$jumlah_row) ? 'display-none' : '';
-										$html .= '<td class="label '.$status_tier_hid.'">  &nbsp;<br/><br/>'.str_pad($br,2,'0',STR_PAD_LEFT).'</td>';
-										$putih=0;
+										$html .= '<td class="label">  &nbsp;<br/><br/>'.str_pad($br,2,'0',STR_PAD_LEFT).'</td>';
 									}
 									else
 									{
@@ -254,7 +240,6 @@
 											$vsbay = $data_cont[11];
 											$ydloc = $data_cont[12];
 											$vstatusload = $data_cont[13];
-											$hq_flag = ($ty=='HQ') ? 'HQ' : '';
 											$tl_flag = ($data_cont[14]=='Y') ? 'TL' : '';
 											$commodity = $data_cont[15];
 											$id_class_code = $data_cont[16];
@@ -262,7 +247,6 @@
 											$pod_color = $id_class_code == 'TC' ? 'CCCCCC' : get_pod_color($pod);
 											$pod_fontcolor = $id_class_code == 'TC' ? 'CCCCCC' : get_pod_color($pod,'FOREGROUND_COLOR');
 											$ydloc = ($data_cont[17] == 'Y') ? '--' : $ydloc;
-											$sequence = $data_cont[19]=='P' ?  $data_cont[18]: 'C';
 
 											//debux($data_cont);
 											
@@ -281,8 +265,7 @@
 
 													$line1 = ($id_class_code=='I') ? '' : $id_class_code;
 													//if($tl_flag == 'Y'){
-														$line1 .= '<span style="font-weight:bold">'.$sequence.'</span> ';
-														$line1 .= $hq_flag.' '.$tl_flag.''.$esy;
+														$line1 .= ''.$tl_flag.''.$esy;
 													//}
 
 													
@@ -318,12 +301,10 @@
 										else
 										{
 											$html .= '<td class="general">&nbsp;  </td>';
-											$putih++;
 										}
 									}
 								}
 								$html .= '</tr>';
-								
 							}
 
 								$html .= '<tr>';
@@ -361,15 +342,8 @@
 									else
 									{	
 										$summary_weight = $this->vessel->summary_weight($id_ves_voyage,$no_bay,$row_bay,$pss_bay)->TOTAL;
-										$row = str_pad($row_bay,2,'0',STR_PAD_LEFT);
-										$count_row = $this->vessel->get_count_row($vescode, $id_bay,$row,$posisibay);
-										if($count_row->JML < 1){
-											$status_row_hid = 'display-none';
-										} else {
-											$status_row_hid = '';
-											$palka++;
-										}
-										$html .= '<td class="label '.$status_row_hid.'"> '.$row.'<br />'.$summary_weight.'</td>';
+									
+										$html .= '<td class="label">'.str_pad($row_bay,2,'0',STR_PAD_LEFT).'<br />'.$summary_weight.'</td>';
 									}
 								}
 							}
@@ -382,7 +356,7 @@
 							$data_html = '';
 							foreach($plan_mch as $data_row){
 								$data_html = $data_html . '<tr><td class="alat" valign="center" align="center"> '
-									. $data_row['MCH_NAME'] .'<br /><span class="big_font">abc '. $data_row['SEQUENCE'] . '</span> </td></tr>';
+									. $data_row['MCH_NAME'] .'<br /><span class="big_font">'. $data_row['SEQUENCE'] . '</span> </td></tr>';
 							}
 							$html .= '<td align="center">
 								<table align="center">
@@ -396,9 +370,7 @@
 						  </table>
 						  </center>
 						  <style>
-						.display-none{
-							display:none;
-						}
+						
 						.allocation  {
 							width : '.$szbox.'px;
 							height : '.$szbox.'px;
@@ -449,7 +421,6 @@
 							font-family : verdana;
 						}
 						.general  {
-							display:none;
 							width : '.$szbox.'px;
 							height : '.$szbox.'px;
 							font-size : '.$ftsz.'pt; 
@@ -467,7 +438,7 @@
 						}
 				</style>';
 				
-		// echo $html; die;
+		//echo $html; die;
 		
 		// Print text using writeHTMLCell()
 		$pdf->writeHTMLCell($w=0, $h=0, $x='', $y='', $html, $border=0, $ln=1, $fill=0, $reseth=true, $align='', $autopadding=true);

@@ -93,7 +93,7 @@ class Report_gate extends CI_Controller {
 			$show_data = isset($_REQUEST['show_data']) ? json_decode($_REQUEST['show_data'])   : false;
 			for ($i=0;$i<count($show_data);$i++){
 				$sd = $show_data[$i];
-			}
+}
 			$date_gate_in  = $sd->DATE_GATE_IN;
 			$date_gate_out = $sd->DATE_GATE_OUT;
 			$kegiatan      = $sd->KEGIATAN;

@@ -19,34 +19,6 @@ if ( !function_exists('absint') )
 	}
 }
 
-if ( !function_exists('generate_pdf') ){
-	function generate_pdf($name, $orientation, $tpl, $data)
-	{
-		$ci = &get_instance();
-		$data['data'] = $data;
-		$ci->load->view($tpl, $data);
-		// Get output html
-		// $html = $ci->output->get_output();
-		// add external css library
-		// Load pdf library
-		$html='<html><head><title>Insert title here</title></head><body>Sample Text</body></html>';
-		$ci->load->library('dompdfs');
-		$ci->dompdf->loadHtml($html);
-		// setup size
-		$ci->dompdf->setPaper('A4', $orientation);
-		// Render the HTML as PDF
-		$stream = $ci->dompdf->render();
-		
-		$ci->dompdf->stream($name, array("Attachment" => 0));
-		// // Output  PDF (1 = download and 0 = preview)
-		// if ($stream) {
-		// 	$ci->dompdf->stream($name, array("Attachment" => 0));
-		// } else {
-		// 	return $ci->dompdf->output();
-		// }
-	}
-}
-
 if ( ! function_exists('debux'))
 {
 	function debux($array, $is_die = FALSE)

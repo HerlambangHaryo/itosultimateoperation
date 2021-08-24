@@ -816,8 +816,8 @@ $(function() {
 							allowBlank: false
 						}
 					}
-					
 
+					
 					/*
 					,{ text: 'Ocean Going/Intersuler', dataIndex: 'O_I', width: 180, 
 						editor: {

@@ -1,0 +1,28 @@
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+
+session_start();
+
+class Outbound_yard_summary extends CI_Controller {
+	public function __construct(){
+		parent::__construct();
+		$this->load->helper('url'); 
+		$this->load->helper('form');
+		$this->load->library('form_validation');
+		$this->load->model('yard');
+		$this->load->model('gtools');
+	}
+	
+	public function index(){
+		$data['tab_id'] = $_GET['tab_id'];
+		$data['id_ves_voyage'] = $_POST['data_id'];
+		
+		if ($data['id_ves_voyage']!=''){
+			$this->load->view('templates/outbound_yard_summary/outbound_yard_summary', $data);
+		}
+	}
+	
+	public function data_outbound_yard_summary($id_ves_voyage){
+		$retval = $this->yard->get_data_outbound_yard_summary($id_ves_voyage);
+		echo json_encode($retval);
+	}
+}

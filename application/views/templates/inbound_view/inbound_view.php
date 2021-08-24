@@ -23,19 +23,6 @@ div.grid_<?=$tab_id?> {
     font-size: <?=floor($konstantabox / 4)?>px;
     position: absolute;
 }
-
-.display-none  {
-	display: none;
-}
-
-.boxTable{
-	background: white url(./excite-bike/images/MUTIH.png)  50% 50% repeat;
-	color: #3b3b3b;
-	font-size:10px;
-	text-align: center;
-	width: 35px;
-}
-
 .simbil{
 	font-size: xx-small;
 }
@@ -231,10 +218,6 @@ $(function() {
 		$count_bay = 0;
 		foreach($bay_area as $bay){
 			$n = -2;
-			$status_row_hidden = array();
-			$colspan_row = 1;
-			$tier = array();
-			$status_tier_hid = false;
 	?>
 	<?php
 			if ($bay['BAY']%2!=0){
@@ -321,21 +304,11 @@ $(function() {
 						$odd = true;
 						$start = $bay["JML_ROW"] - 1;
 					}
-					$status_row_hid = false;
+					
 					for($j = 1; $j <= $bay["JML_ROW"]; $j++){
-						$row = str_pad($start,2,'0',STR_PAD_LEFT);
-					 	$count_row = $this->vessel->get_count_row($ID_VESSEL, $bay['ID_BAY'],$row);
-						 if($count_row->JML < 1){
-							 $status_row_hid = true;
-						 } else {
-							 $colspan_row++;
-							 $status_row_hid = false;
-						 }
-						array_push($status_row_hidden, $status_row_hid);
-
 				?>
-					<td style="padding: 0px; width:25px" class="boxTable <?=($count_row->JML < 1) ? 'display-none' : '' ?>">
-						<?=$row?>
+					<td style="padding: 0px; width: <?=$size-$bay["JML_ROW"]-3?>px;">
+						<center style="font-size:10px;"><?=str_pad($start,2,'0',STR_PAD_LEFT)?></center>
 					</td>
 				<?php
 						if (($start + $n) == 0){
@@ -357,7 +330,7 @@ $(function() {
 					</td>
 				</tr>
 				<tr>
-					<td colspan='<?=$colspan_row?>' check="AA">
+					<td colspan='<?=$bay["JML_ROW"]+1?>'>
 				<?php
 				if ($bay['ABOVE']=='AKTIF'){
 				?>
@@ -366,16 +339,9 @@ $(function() {
 				$index = 0;
 				$bay_cell = $this->vessel->get_vessel_profile_cellInfo($id_ves_voyage, $class_code, $ID_VESSEL, $bay['ID_BAY'], $bay['BAY'], 'ABOVE');
 				//debux($bay_cell);
-				
 				for($j = 1; $j <= $bay["JML_TIER_ON"]; $j++){
 						for($s = 1; $s <= $bay["JML_ROW"]; $s++){
 							$cell = $bay_cell[$index];
-							 
-							if(!in_array($cell['TIER_'], $tier)){
-								$count_tier =  $this->vessel->get_count_tier($ID_VESSEL, $bay['ID_BAY'],$cell['TIER_']);
-								$status_tier_hid = ($count_tier->JML < 1) ? true : false;
-								array_push($tier, $cell['TIER_']);
-							}
 
 							if ($cell['CONT_40_LOCATION']==''){ 
 							    if($cell['ID_CLASS_CODE']=='TC'){  
@@ -406,7 +372,7 @@ $(function() {
 							cont_size="<?=$cell['CONT_SIZE']?>" 
 							title="<?=$cell['NO_CONTAINER']?><?php echo ($cell['TL_FLAG']=='Y') ? ' - TL' : ''; ?>" 
 								class="ui-box-container <?=$cls?>"
-							<?php }else if($cell['STATUS_STACK']!='A'){ ?> class="uiMutih <?=($status_row_hidden[$s-1] || $status_tier_hid) ? 'display-none' : '' ?>" <?php }
+							<?php }else if($cell['STATUS_STACK']!='A'){ ?> class="uiMutih" <?php }
 							else{ ?> class="ui-state-default" <?php }?> id_bay="<?=$cell['ID_BAY']?>" id_cell="<?=$cell['ID_CELL']?>" row="<?=$cell['ROW_']?>" tier="<?=$cell['TIER_']?>" bay="<?=$cell['BAY']?>" deck_hatch="D" 
 							<?php if($cell['STATUS_STACK']!='X'){ ?>style="box-shadow:0 1px 2px #616161,inset 0 -1px 1px rgba(0,0,0,0.1),inset 0 1px 1px rgba(255,255,255,0.8); 
 							<?php if($cell['CONT_40_LOCATION']==''){
@@ -467,7 +433,7 @@ $(function() {
 							//($cell['STATUS']=='P')
 						}
 					?>
-						<li style="font-size:10px;" class="<?=($status_tier_hid) ? 'display-none' : ''?>"><?=$cell["TIER_"]?></li>
+						<li style="font-size:10px;"><?=$cell["TIER_"]?></li>
 				<?php
 				}
 				?>
@@ -499,7 +465,7 @@ $(function() {
 				</tr>
 				
 				<tr>
-					<td colspan='<?=$colspan_row?>' check="BB">
+					<td colspan='<?=$bay["JML_ROW"]+1?>'>
 				<?php
 				if ($bay['BELOW']=='AKTIF'){
 				?>
@@ -507,16 +473,9 @@ $(function() {
 				<?php
 				$index = 0;
 				$bay_cell = $this->vessel->get_vessel_profile_cellInfo($id_ves_voyage, $class_code, $ID_VESSEL, $bay['ID_BAY'], $bay['BAY'], 'BELOW');
-				
 				for($j = 1; $j <= $bay["JML_TIER_UNDER"]; $j++){
 						for($s = 1; $s <= $bay["JML_ROW"]; $s++){
 							$cell = $bay_cell[$index];
-							 
-							if(!in_array($cell['TIER_'], $tier)){
-								$count_tier =  $this->vessel->get_count_tier($ID_VESSEL, $bay['ID_BAY'],$cell['TIER_']);
-								$status_tier_hid = ($count_tier->JML < 1) ? true : false;
-								array_push($tier, $cell['TIER_']);
-							}
 				?>
 						<li <?php if ($cell['NO_CONTAINER']!=''){ ?> 
 						    no_container="<?=$cell['NO_CONTAINER']?>" 
@@ -544,7 +503,7 @@ $(function() {
 							<?php } ?>"
 							<?php
 							}else if($cell['STATUS_STACK']!='A'){ ?> 
-								    class="uiMutih <?=($status_row_hidden[$s-1] || $status_tier_hid) ? 'display-none' : '' ?>" 
+								    class="uiMutih" 
 							<?php }else{ ?> 
 								class="ui-state-default" <?php } ?> id_bay="<?=$cell['ID_BAY']?>" id_cell="<?=$cell['ID_CELL']?>" row="<?=$cell['ROW_']?>" tier="<?=$cell['TIER_']?>" bay="<?=$cell['BAY']?>" deck_hatch="H" 
 							<?php if($cell['STATUS_STACK']!='X'){ ?>
@@ -604,7 +563,7 @@ $(function() {
 						
 						}
 					?>
-						<li style="font-size:10px;" class="<?=($status_tier_hid) ? 'display-none' : ''?>"><?=str_pad($cell["TIER_"],2,'0',STR_PAD_LEFT)?></li>
+						<li style="font-size:10px;"><?=str_pad($cell["TIER_"],2,'0',STR_PAD_LEFT)?></li>
 				<?php
 				}
 				?>
@@ -626,19 +585,9 @@ $(function() {
 					$n = -2;
 					
 					for($j = 1; $j <= $bay["JML_ROW"]; $j++){
-						$row = str_pad($start,2,'0',STR_PAD_LEFT);
-					 	$count_row = $this->vessel->get_count_row($ID_VESSEL, $bay['ID_BAY'],$row);
-						if($count_row->JML < 1){
-							$status_row_hid = true;
-						} else {
-							$colspan_row++;
-							$status_row_hid = false;
-						}
-						
-						array_push($status_row_hidden, $status_row_hid);
 				?>
-					<td style="padding: 0px; width:25px" class="boxTable <?=($count_row->JML < 1) ? 'display-none' : '' ?>">
-						<?=$row?>
+					<td style="padding: 0px; width: <?=$size-$bay["JML_ROW"]?>px;">
+						<center style="font-size:10px;"><?=str_pad($start,2,'0',STR_PAD_LEFT)?></center>
 					</td>
 					<?php
 							if (($start + $n) == 0){
@@ -745,19 +694,9 @@ $(function() {
 					}
 					
 					for($j = 1; $j <= $bay["JML_ROW"]; $j++){
-						$row = str_pad($start,2,'0',STR_PAD_LEFT);
-					 	$count_row = $this->vessel->get_count_row($ID_VESSEL, $bay['ID_BAY'],$row);
-						 if($count_row->JML < 1){
-							 $status_row_hid = true;
-						 } else {
-							 $colspan_row++;
-							 $status_row_hid = false;
-						 }
-						 
-						array_push($status_row_hidden, $status_row_hid);
 				?>
-					<td style="padding: 0px;" class="boxTable <?=($count_row->JML < 1) ? 'display-none' : '' ?>">
-						<?=$row?>
+					<td style="padding: 0px; width: <?=$size-$bay["JML_ROW"]?>px;">
+						<center style="font-size:10px;"><?=str_pad($start,2,'0',STR_PAD_LEFT)?></center>
 					</td>
 				<?php
 						if (($start + $n) == 0){
@@ -779,7 +718,7 @@ $(function() {
 					</td>
 				</tr>
 				<tr>
-					<td colspan='<?=$colspan_row?>' check="CC">
+					<td colspan='<?=$bay["JML_ROW"]+1?>'>
 				<?php
 				if ($bay['ABOVE']=='AKTIF'){
 				?>
@@ -787,16 +726,9 @@ $(function() {
 				<?php
 				$index = 0;
 				$bay_cell = $this->vessel->get_vessel_profile_cellInfo($id_ves_voyage, $class_code, $ID_VESSEL, $bay['ID_BAY'], $bay['BAY'], 'ABOVE');
-				
 				for($j = 1; $j <= $bay["JML_TIER_ON"]; $j++){
 						for($s = 1; $s <= $bay["JML_ROW"]; $s++){
 							$cell = $bay_cell[$index];
-							 
-							if(!in_array($cell['TIER_'], $tier)){
-								$count_tier =  $this->vessel->get_count_tier($ID_VESSEL, $bay['ID_BAY'],$cell['TIER_']);
-								$status_tier_hid = ($count_tier->JML < 1) ? true : false;
-								array_push($tier, $cell['TIER_']);
-							}
 				?>
 						<li 
 						    <?php if ($cell['NO_CONTAINER']!=''){ ?> 
@@ -821,7 +753,7 @@ $(function() {
 								?> 
 								    <?php }else{ ?> 
 							    class="ui-placement-default" <?php } ?> 
-							    <?php }else if($cell['STATUS_STACK']!='A'){ ?> class="uiMutih <?=($status_row_hidden[$s-1] || $status_tier_hid ) ? 'display-none' : '' ?>" <?php }else{ ?> class="ui-state-default" <?php }?> id_bay="<?=$cell['ID_BAY']?>" id_cell="<?=$cell['ID_CELL']?>" row="<?=$cell['ROW_']?>" tier="<?=$cell['TIER_']?>" bay="<?=$cell['BAY']?>" deck_hatch="D" 
+							    <?php }else if($cell['STATUS_STACK']!='A'){ ?> class="uiMutih" <?php }else{ ?> class="ui-state-default" <?php }?> id_bay="<?=$cell['ID_BAY']?>" id_cell="<?=$cell['ID_CELL']?>" row="<?=$cell['ROW_']?>" tier="<?=$cell['TIER_']?>" bay="<?=$cell['BAY']?>" deck_hatch="D" 
 						<?php if($cell['STATUS_STACK']!='X'){ ?>
 							    style="box-shadow:0 1px 2px #616161,inset 0 -1px 1px rgba(0,0,0,0.1),inset 0 1px 1px rgba(255,255,255,0.8);
 							    <?php if($cell['BACKGROUND_COLOR'] != '' && $cell['ID_CLASS_CODE']!='TC'){ ?>
@@ -878,7 +810,7 @@ $(function() {
 							$index++;
 						}
 					?>
-						<li style="font-size:10px;" class="<?=($status_tier_hid) ? 'display-none' : ''?>"><?=$cell["TIER_"]?></li>
+						<li style="font-size:10px;"><?=$cell["TIER_"]?></li>
 				<?php
 				}
 				?>
@@ -894,7 +826,7 @@ $(function() {
 				</tr>
 				
 				<tr>
-					<td colspan='<?=$colspan_row?>' check="DD">
+					<td colspan='<?=$bay["JML_ROW"]+1?>'>
 				<?php
 				if ($bay['BELOW']=='AKTIF'){
 				?>
@@ -902,17 +834,9 @@ $(function() {
 				<?php
 				$index = 0;
 				$bay_cell = $this->vessel->get_vessel_profile_cellInfo($id_ves_voyage, $class_code, $ID_VESSEL, $bay['ID_BAY'], $bay['BAY'], 'BELOW');
-				
 				for($j = 1; $j <= $bay["JML_TIER_UNDER"]; $j++){
 						for($s = 1; $s <= $bay["JML_ROW"]; $s++){
-							
 							$cell = $bay_cell[$index];
-							 
-							if(!in_array($cell['TIER_'], $tier)){
-								$count_tier =  $this->vessel->get_count_tier($ID_VESSEL, $bay['ID_BAY'],$cell['TIER_']);
-								$status_tier_hid = ($count_tier->JML < 1) ? true : false;
-								array_push($tier, $cell['TIER_']);
-							}
 				?>
 						<li <?php if ($cell['NO_CONTAINER']!=''){ ?> no_container="<?=$cell['NO_CONTAINER']?>" point="<?=$cell['POINT']?>" cont_size="<?=$cell['CONT_SIZE']?>" title="<?=$cell['NO_CONTAINER']?><?php echo ($cell['TL_FLAG']=='Y') ? ' - TL' : ''; ?>" 
 						    	    <?php if ($cell['CONT_40_LOCATION']==''){ 
@@ -937,7 +861,7 @@ $(function() {
 								    class="ui-placement-default" 
 						<?php } ?> 
 						    <?php  ?> 
-						    <?php }else if($cell['STATUS_STACK']!='A'){ ?> class="uiMutih <?=($status_row_hidden[$s-1] || $status_tier_hid) ? 'display-none' : '' ?>" <?php }else{ ?> class="ui-state-default" <?php } ?> id_bay="<?=$cell['ID_BAY']?>" id_cell="<?=$cell['ID_CELL']?>" row="<?=$cell['ROW_']?>" tier="<?=$cell['TIER_']?>" bay="<?=$cell['BAY']?>" deck_hatch="H" 
+						    <?php }else if($cell['STATUS_STACK']!='A'){ ?> class="uiMutih" <?php }else{ ?> class="ui-state-default" <?php } ?> id_bay="<?=$cell['ID_BAY']?>" id_cell="<?=$cell['ID_CELL']?>" row="<?=$cell['ROW_']?>" tier="<?=$cell['TIER_']?>" bay="<?=$cell['BAY']?>" deck_hatch="H" 
 						<?php if($cell['STATUS_STACK']!='X'){ ?>style="box-shadow:0 1px 2px #616161,inset 0 -1px 1px rgba(0,0,0,0.1),inset 0 1px 1px rgba(255,255,255,0.8); 
 							<?php if($cell['BACKGROUND_COLOR'] != '' && $cell['ID_CLASS_CODE']!='TC'){ ?>
 								background: #<?=$cell['BACKGROUND_COLOR']?>;
@@ -993,7 +917,7 @@ $(function() {
 							$index++;
 						}
 					?>
-						<li style="font-size:10px;" class="<?=($status_tier_hid) ? 'display-none' : ''?>"><?=str_pad($cell["TIER_"],2,'0',STR_PAD_LEFT)?></li>
+						<li style="font-size:10px;"><?=str_pad($cell["TIER_"],2,'0',STR_PAD_LEFT)?></li>
 				<?php
 				}
 				?>
@@ -1015,19 +939,9 @@ $(function() {
 					$n = -2;
 					
 					for($j = 1; $j <= $bay["JML_ROW"]; $j++){
-						$row = str_pad($start,2,'0',STR_PAD_LEFT);
-					 	$count_row = $this->vessel->get_count_row($ID_VESSEL, $bay['ID_BAY'],$row);
-						if($count_row->JML < 1){
-							$status_row_hid = true;
-						} else {
-							$colspan_row++;
-							$status_row_hid = false;
-						}
-						
-						array_push($status_row_hidden, $status_row_hid);
 				?>
-					<td style="padding: 0px;" class="boxTable <?=($count_row->JML < 1) ? 'display-none' : '' ?>">
-						<?=$row?>
+					<td style="padding: 0px; width: <?=$size-$bay["JML_ROW"]?>px;">
+						<center style="font-size:10px;"><?=str_pad($start,2,'0',STR_PAD_LEFT)?></center>
 					</td>
 					<?php
 							if (($start + $n) == 0){

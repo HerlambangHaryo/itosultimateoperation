@@ -28,15 +28,14 @@ class Outbound_yard_summary extends CI_Controller {
 	}
 
 	public function get_data_yard_outbound($id_yard='',$tab_id='',$excel='',$id_ves_voyage){		
+
 		$data['list_commodity'] = $this->yard->list_commodity();
 		$data['list_general']	= $this->yard->list_refer($id_yard,'G',$id_ves_voyage);
 		$data['list_refer'] 	= $this->yard->list_refer($id_yard,'R',$id_ves_voyage);
 		$data['list_hz'] 		= $this->yard->list_refer($id_yard,'H',$id_ves_voyage);
-
 		$data['list_empty'] 	= $this->yard->list_refer($id_yard,'M',$id_ves_voyage);
 		$data['list_rh'] 		= $this->yard->list_refer($id_yard,'RH',$id_ves_voyage);
 		$data['list_ov'] 		= $this->yard->list_refer($id_yard,'OV',$id_ves_voyage);
-		
 		$data['id_yard']		= $id_yard;
 		$data['excel']			= $excel;
 		$data['id_ves_voyage']  = $id_ves_voyage;

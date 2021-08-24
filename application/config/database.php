@@ -49,9 +49,9 @@ $active_record = TRUE;
 
 // DEVELOPMENT
 
-$db['default']['hostname'] = '10.88.48.87:1521/TO2TPKDEV';
+$db['default']['hostname'] = '10.88.48.93:1521/JICT2QA';
 $db['default']['username'] = 'ITOS_OP';
-$db['default']['password'] = 'itos_OP';
+$db['default']['password'] = 'itos_oP';
 $db['default']['database'] = 'ITOS_OP';
 $db['default']['dbdriver'] = 'oci8';
 $db['default']['dbprefix'] = '';
@@ -81,10 +81,10 @@ $db['billing']['swap_pre'] = '';
 $db['billing']['autoinit'] = TRUE;
 $db['billing']['stricton'] = FALSE;
 */
-$db['repo']['hostname'] = '10.88.48.87:1521/TO2TPKDEV';
+$db['repo']['hostname'] = '10.88.48.93:1521/JICT2QA';
 //$db['repo']['hostname'] = '10.10.33.150:1521/bantentosdb';
 $db['repo']['username'] = 'ITOS_REPO';
-$db['repo']['password'] = 'itos_REPO';
+$db['repo']['password'] = 'itos_repO';
 $db['repo']['database'] = 'ITOS_REPO';
 $db['repo']['dbdriver'] = 'oci8';
 $db['repo']['dbprefix'] = '';

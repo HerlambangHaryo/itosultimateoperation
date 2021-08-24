@@ -87,7 +87,6 @@
 						loadmask.hide();
 						if(response.status=='200'){
 							$('#reportyor<?=$tab_id?>').html(response.responseText);
-							console.log('wkwkwkwkw',response.responseText);
 						}else{
 							Ext.Msg.alert('Failed', 'Vessel Voyage Tidak Valid');
 						}

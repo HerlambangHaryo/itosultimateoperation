@@ -15,7 +15,7 @@ class Single_stack_view extends CI_Controller {
 		$data['tab_id'] = $_GET['tab_id'];
 		$data['isRelocOn'] = $isRelocOn = isset($_GET['isRelocOn']) && $_GET['isRelocOn'] != '' ? $_GET['isRelocOn'] : 0;
 		$id_ves_voyage  = $_POST['data_id'];
-		// debux($_POST['data_id']);die();
+
 		if (strpos($_POST['data_id'], '-') == true) {
     		$result 		= explode('-',$_POST['data_id']);
     		$id_block 		= $result[0];
@@ -57,7 +57,6 @@ class Single_stack_view extends CI_Controller {
 		$data['slot_list'] = $this->yard->get_slot_list($id_yard, $id_block);
 		if($idpod!='' and $yjp=='oys'){
 			$data['YD_SLOT'] = $this->yard->get_list_slot_single_stok_view($id_ves_voyage,$id_yard,$size,$idpod,$type,$id_block);
-		// debux($data['YD_SLOT']);
 		}
 //		$data['void'] = $this->yard->get_void_list($id_yard, $id_block, $slot);
 		$this->load->view('templates/single_stack_view/viewer_panel', $data);

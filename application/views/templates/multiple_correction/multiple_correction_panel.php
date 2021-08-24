@@ -258,7 +258,7 @@
 						editable: true,
 						allowBlank: true
 					}
-				},				
+				},
 				// { text: 'POL', dataIndex: 'ID_POL', width: 80,
 					// editor: {
 						// xtype:'combo',

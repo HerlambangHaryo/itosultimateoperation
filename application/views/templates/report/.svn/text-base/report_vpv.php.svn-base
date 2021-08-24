@@ -1,0 +1,72 @@
+<script type="text/javascript">
+	var vessel_list_store_<?=$tab_id?> = Ext.create('Ext.data.Store', {
+		fields:['TAHUN'],
+		proxy: {
+			type: 'ajax',
+			url: '<?=controller_?>vessel_production_volume/data_vessel_year/',
+			reader: {
+				type: 'json'
+			}
+		},
+		autoLoad: true
+	});
+
+	Ext.create('Ext.form.Panel', {
+		id: "vessel_voyage_form_<?=$tab_id?>",
+		bodyPadding: 5,
+		fieldDefaults: {
+			labelAlign: 'left',
+			labelWidth: 150
+		},
+		//url: '<?=controller_?>report_bch/save_vessel_voyage',
+		items: [
+		// FIELD SELECT VESSEL
+		{
+			xtype: 'fieldset',
+			title: 'Choose Year',
+			items: [
+			{
+				id: "vessel_<?=$tab_id?>",
+				xtype: 'combo',
+				width: 500,
+				displayField: 'TAHUN',
+				valueField: 'TAHUN',
+				store: vessel_list_store_<?=$tab_id?>,
+				queryMode: 'remote',
+				forceSelection: true,
+				hideTrigger: true,
+				triggerAction: 'query',
+				emptyText: 'Autocomplete',
+				typeAhead: true,
+				minChars: 3,
+				name: "TAHUN",
+				fieldLabel: 'Year',
+				//allowBlank: false
+			}
+			]
+		},
+
+		],
+		buttons: [{
+			text: 'Export to Excel',
+			//formBind: true,
+			handler: function() {
+				var form = this.up('form').getForm();
+				var year = form.findField("TAHUN").getValue();
+				
+				if (form.isValid()){
+					//loadmask.show();
+					var url = '<?=controller_?>vessel_production_volume/get_data_vpv?year='+year;
+					window.open(url,'_blank');
+				} else {
+					Ext.Msg.alert('Failed', 'Form Tidak Valid');
+				}
+			}
+		}]
+	}).render('vessel_voyage_<?=$tab_id?>');
+	
+	$(document).ready(function (){
+		
+	});
+</script>
+<div id="vessel_voyage_<?=$tab_id?>"></div>

@@ -23,18 +23,6 @@
 		position: absolute;
 	}
 
-	.display-none  {
-		display: none;
-	}
-
-	.boxTable{
-		background: white url(./excite-bike/images/MUTIH.png)  50% 50% repeat;
-		color: #3b3b3b;
-		font-size:10px;
-		text-align: center;
-		width: 35px;
-	}
-
 
 	.simbil{
 		font-size: 8px;
@@ -52,15 +40,6 @@
 		height: 18px;
 		margin-top: -8px;
 		width: 10px;
-	}	
-
-	.div-job-seq-right{
-		height: 18px;
-		width: 10px;
-	    margin-top: -25px;
-  		z-index: 2;
-  		position: absolute;
-  		margin-left: 12px;
 	}	
 
 	.ui-plan-defaultz {
@@ -503,17 +482,13 @@ $( ".selectable_<?=$tab_id?> .ui-placement-default,.selectable_<?=$tab_id?> .ui-
 				<?php
 				foreach($bay_area as $bay){
 					$n = -2;
-					$status_row_hidden = array();
-					$colspan_row = 1;
-					$tier = array();
-					$status_tier_hid = false;
 					?>
 					<?php
 					if ($bay['BAY']%2!=0){
 						?>
-						<td align="center" id="bay_view_<?=$tab_id?>_<?=$bay['BAY']?>"><!-- TD GANJIL -->
-							<table style="width: <?=($bay["JML_ROW"]+1)*$size+20?>px;" frame="box"><!-- TD-TABLE GANJIL -->
-								<tr><!-- 1 TR-1 -->
+						<td align="center" id="bay_view_<?=$tab_id?>_<?=$bay['BAY']?>">
+							<table style="width: <?=($bay["JML_ROW"]+1)*$size+20?>px;" frame="box">
+								<tr>
 									<?php
 									if ($count_bay==0 || $bay_area[$count_bay-1]["BAY"]%2!=0){
 										?>
@@ -584,8 +559,7 @@ $( ".selectable_<?=$tab_id?> .ui-placement-default,.selectable_<?=$tab_id?> .ui-
 									}
 									?>
 								</tr>
-
-								<tr><!-- 1 TR-2 -->
+								<tr>
 									<?php
 									$odd = false;
 									if( ($bay["JML_ROW"] % 2) == 0){
@@ -594,27 +568,11 @@ $( ".selectable_<?=$tab_id?> .ui-placement-default,.selectable_<?=$tab_id?> .ui-
 										$odd = true;
 										$start = $bay["JML_ROW"] - 1;
 									}
-									$n=-2;
-									for($j = 1; $j <= $bay["JML_ROW"]; $j++){
-										$row = str_pad($start,2,'0',STR_PAD_LEFT);
-										$count_row = $this->vessel->get_count_row($ID_VESSEL, $bay['ID_BAY'],$row);
-										if($count_row->JML < 1){
-											$status_row_hid = true;
-										} else {
-											$colspan_row++;
-											$status_row_hid = false;
-										}
-										array_push($status_row_hidden, $status_row_hid);
-										?>
-										<td style="padding: 0px; width: 35px;" class="boxTable <?=($count_row->JML < 1) ? 'display-none' : '' ?>">
-											<?php
-												$start_str_pad_left = str_pad($start,2,'0',STR_PAD_LEFT);
 
-												//if($start_str_pad_left != '00')
-												//{
-													echo $start_str_pad_left;
-												//}
-											?>
+									for($j = 1; $j <= $bay["JML_ROW"]; $j++){
+										?>
+										<td style="padding: 0px; width: <?=$size-$bay["JML_ROW"]?>px;">
+											<center class="ui-small-font"><?=str_pad($start,2,'0',STR_PAD_LEFT)?></center>
 										</td>
 										<?php
 										if (($start + $n) == 0){
@@ -635,9 +593,8 @@ $( ".selectable_<?=$tab_id?> .ui-placement-default,.selectable_<?=$tab_id?> .ui-
 									<td>
 									</td>
 								</tr>
-
-								<tr><!-- 1 TR-3 -->
-									<td colspan='<?=$colspan_row?>'>
+								<tr>
+									<td colspan='<?=$bay["JML_ROW"]+1?>'>
 										<?php
 										if ($bay['ABOVE']=='AKTIF'){
 											?>
@@ -648,18 +605,13 @@ $( ".selectable_<?=$tab_id?> .ui-placement-default,.selectable_<?=$tab_id?> .ui-
 												for($j = 1; $j <= $bay["JML_TIER_ON"]; $j++){
 													for($s = 1; $s <= $bay["JML_ROW"]; $s++){
 														$cell = $bay_cell[$index];
-														if(!in_array($cell['TIER_'], $tier)){
-															$count_tier =  $this->vessel->get_count_tier($ID_VESSEL, $bay['ID_BAY'],$cell['TIER_']);
-															$status_tier_hid = ($count_tier->JML < 1) ? true : false;
-															array_push($tier, $cell['TIER_']);
-														}
 														?>
 														<?php 
-															// var_dump($cell['NO_CONTAINER']);
-															// var_dump($cell['STATUS_STACK']);
-															// var_dump($bay_cell[$index-$bay["JML_ROW"]]['NO_CONTAINER']);
+						// var_dump($cell['NO_CONTAINER']);
+						// var_dump($cell['STATUS_STACK']);
+						// var_dump($bay_cell[$index-$bay["JML_ROW"]]['NO_CONTAINER']);
 
-															//------------ code pembentukan class ------------//
+						//------------ code pembentukan class ------------//
 														if ($cell['TIER_'] == "80" || $cell['TIER_'] == "00") { $class_add_ = "ui-stacking-bottom";} else { $class_add_ = ""; } 
 
 														if ($cell['NO_CONTAINER'] == '' && $cell['STATUS_STACK'] != 'A' && $bay_cell[$index-$bay["JML_ROW"]]['NO_CONTAINER']!='') { $class_add_2 = "ui-stacking-top";} else { $class_add_2 = ""; } 
@@ -711,7 +663,7 @@ $( ".selectable_<?=$tab_id?> .ui-placement-default,.selectable_<?=$tab_id?> .ui-
 															    <?php }else{ ?> 
 																	    class="uiUnAvb" 
 															    <?php } ?> 
-															<?php }else if($cell['STATUS_STACK']!='A'){ ?> class="uiMutih <?=$class_add_2?> <?=($status_row_hidden[$s-1] || $status_tier_hid) ? 'display-none' : '' ?>" <?php }else{ ?> class="ui-stacking-defaults <?=$class_add_?>" <?php } ?> id_bay="<?=$cell['ID_BAY']?>" id_cell="<?=$cell['ID_CELL']?>" row="<?=$cell['ROW_']?>" tier="<?=$cell['TIER_']?>" bay="<?=$cell['BAY']?>" deck_hatch="D" 
+															<?php }else if($cell['STATUS_STACK']!='A'){ ?> class="uiMutih <?=$class_add_2?>" <?php }else{ ?> class="ui-stacking-defaults <?=$class_add_?>" <?php } ?> id_bay="<?=$cell['ID_BAY']?>" id_cell="<?=$cell['ID_CELL']?>" row="<?=$cell['ROW_']?>" tier="<?=$cell['TIER_']?>" bay="<?=$cell['BAY']?>" deck_hatch="D" 
 															<?php if($cell['STATUS_STACK']!='X'){ ?>style="box-shadow:0 1px 2px #616161,inset 0 -1px 1px rgba(0,0,0,0.1),inset 0 1px 1px rgba(255,255,255,0.8); 
 															<?php if($cell['CONT_40_LOCATION']==''){
 																if($cell['BACKGROUND_COLOR'] != '' && $cell['ID_CLASS_CODE']!='TC'){ ?>
@@ -724,6 +676,7 @@ $( ".selectable_<?=$tab_id?> .ui-placement-default,.selectable_<?=$tab_id?> .ui-
 														"<? } ?> >
 														<div class="simbil">
 															<?php
+																echo $cell['ID_SPEC_HAND'];
 
 															if($cell['CONT_TYPE']=='HQ'){
 																	?>
@@ -739,24 +692,21 @@ $( ".selectable_<?=$tab_id?> .ui-placement-default,.selectable_<?=$tab_id?> .ui-
 																</div>	
 																<?php
 															}/*else{ echo "C"; }*/ ?>
-															<?php 
-																if ($cell['CONT_40_LOCATION'] == '')
-																{ ?> 
-																	<?php if ($cell['SEQUENCE']!='')
-																	{ ?>
-																		<!--div style="width: 26px; border-bottom: 1px solid rgb(58,87,149); -webkit-transform: translateY(9px) translateX(-3px) rotate(-45deg);"></div-->
-																		<!-- <span class="text_"> -->
+															<?php if ($cell['CONT_40_LOCATION']==''){ ?> 
+																<?php if ($cell['SEQUENCE']!=''){ ?>
+																	<!--div style="width: 26px; border-bottom: 1px solid rgb(58,87,149); -webkit-transform: translateY(9px) translateX(-3px) rotate(-45deg);"></div-->
+																	<!-- <span class="text_"> -->
 																		<div class="div-job-seq">
 																			<?php if ($cell['STATUS']=='P') {
 																				echo $cell['SEQUENCE'];
 																			} else {
 																				echo "C";
-																			} 
-																			?>
+																			} ?>
 																		</div>
-																		<!-- </span> line 729-->
+																		<!-- </span> -->
 																	<?php } ?> 
-																	<?php  if($cell['HAZARD'] == 'Y'){
+																	<?php 
+																	if($cell['HAZARD'] == 'Y'){
 																		echo 'H';
 																	}else{
 																		if($filter == 'SIZE'){
@@ -769,827 +719,637 @@ $( ".selectable_<?=$tab_id?> .ui-placement-default,.selectable_<?=$tab_id?> .ui-
 																			echo $cell['ID_COMMODITY'];
 																		} 
 																	}
-
-																	if ($cell['ID_SPEC_HAND'] != '') 
-																	{
-																		echo '<div class="div-job-seq-right">';
-																		echo $cell['ID_SPEC_HAND'];
-																		echo '</div>';
-																		echo '<!-- line_ID_SPEC_HAND 770 -->';
-																	} 
-																} 
-																?>
-																	<?php 
-																	?>
+																} ?>
 															</div>
-												<!--div style="width: 26px; border-bottom: 1px solid black; -webkit-transform: translateY(9px) translateX(-3px) rotate(-45deg);"></div>
-													<span class="text_">1</span-->
-													</li>
-													<?php
-													if ($cell['STATUS_STACK'] == 'A'){
-														$next_class_tier_ = "ui-stacking-left ";
-													} else {
-														$next_class_tier_ = "";
-													}
-													$index++;
-												}
-												?>
-												<li class="<?=$next_class_tier_?> <?=($status_tier_hid) ? 'display-none' : ''?> ui-small-font">
-												<?php
-													if($cell['TIER_'] != '0')
-													{
-														echo str_pad($cell["TIER_"],2,'0',STR_PAD_LEFT);
-													}
-												?>
-												</li>
-												<?php
-											}
-											?>
-										</ol>
-										<?php
-									}
-									?>
-									</td>
-								</tr>
-
-								<tr><!-- 1 TR-4 -->
-
-									<!-- <td title="cover" colspan="<?=$bay["JML_ROW"]?>" style="background:#3a5795" height="5px"> </td> -->
-
-
-									<td title="cover" colspan="<?=$bay["JML_ROW"]?>" style="height: 2px;" >
-										<?php if($bay["HATCH_NUMBER"]>=1){
-											for($tt=1;$tt<=$bay["HATCH_NUMBER"];$tt++){
-												if($tt > 1){
-													?>
-													<div style="height: 5px; width: 3px; float: left">&nbsp;</div>
-													<?php
-												}
-
-												?>
-												<!--<td title="cover" colspan="<?=$bay["JML_ROW"]/$bay["HATCH_NUMBER"]?>" style="background:#3a5795;padding-left:30px;" height="5px" > </td>-->
-												<div class="palka" style="width: calc(<?=100/$bay["HATCH_NUMBER"]?>% - 2px)">&nbsp;</div>
-												<?php
-											}
-										}
-										?>
-									</td>
-
-									<td width="<?=$size?>px"></td>
-								</tr>
-
-								<tr><!-- 1 TR-5 -->
-									<td colspan='<?=$colspan_row?>'>
-										<?php
-										if ($bay['BELOW']=='AKTIF'){
-											?>
-											<ol class="selectable_<?=$tab_id?>">
-												<?php
-												$index = 0;
-												$bay_cell = $this->vessel->get_vessel_profile_cellInfo($id_ves_voyage, $class_code, $ID_VESSEL, $bay['ID_BAY'], $bay['BAY'], 'BELOW');
-												for($j = 1; $j <= $bay["JML_TIER_UNDER"]; $j++){
-													for($s = 1; $s <= $bay["JML_ROW"]; $s++){
-														$cell = $bay_cell[$index];
-														if(!in_array($cell['TIER_'], $tier)){
-															$count_tier =  $this->vessel->get_count_tier($ID_VESSEL, $bay['ID_BAY'],$cell['TIER_']);
-															$status_tier_hid = ($count_tier->JML < 1) ? true : false;
-															array_push($tier, $cell['TIER_']);
-														}
-														?>
-														<?php 
-													// var_dump($cell['STATUS_STACK']);
-													// var_dump($bay_cell[$index-1]['STATUS_STACK']);
-													// var_dump($bay_cell[$index+1]['STATUS_STACK']);
-													// var_dump($bay_cell[$index-$bay["JML_ROW"]]['NO_CONTAINER']);
-
-														if ($cell['TIER_'] == "80" || $cell['TIER_'] == "00") { $class_add_ = "ui-stacking-bottom";} else { $class_add_ = ""; } 
-
-														if ($cell['STATUS_STACK'] == 'X' && $bay_cell[$index-$bay["JML_ROW"]]['STATUS_STACK']=='A') { $class_add_2 = " ui-stacking-top";} else { $class_add_2 = " "; } 
-
-														if ($cell['STATUS_STACK'] == 'X' && $bay_cell[$index-1]['STATUS_STACK']=='A' && $cell['TIER_'] == $bay_cell[$index-1]['TIER_']) { $class_add_2 .= " ui-stacking-left";} else { $class_add_2 .= " "; } 
-
-														if ($cell['STATUS_STACK'] == 'X' && $bay_cell[$index-1]['STATUS_STACK']=='A' && $cell['TIER_'] == $bay_cell[$index-1]['TIER_']) { $class_add_2 .= " ui-stacking-left";} else { $class_add_2 .= " "; } 
-
-														if(!empty($cell['NO_CONTAINER'])){
-															$titleli="$cell[YD_LOCATION]";
-															$class_add_ .= " tooltip ";
-														}
-														if ($cell['TL_FLAG']=='Y') {
-															$class_add_ .= " hidetl ";
-														}
-														?>
-														<li tooltip="<?=$titleli?>" id_ves_voyage="<?=$id_ves_voyage?>" class_code="<?=$class_code?>" id_vessel="<?=$ID_VESSEL?>" id_bay="<?=$bay['ID_BAY']?>" <?php if ($cell['NO_CONTAINER']!=''){ ?> 
-														    no_container="<?=$cell['NO_CONTAINER']?>" 
-														    point="<?=$cell['POINT']?>" 
-														    infotitle="<?=$cell['NO_CONTAINER']?><?php echo ($cell['TL_FLAG']=='Y') ? ' - TL' : ''; ?>" 
-														    cont_size="<?=$cell['CONT_SIZE']?>" 
-														    data-pod="<?=$cell['ID_POD']?>" 
-														    data-pod-color="<?=$cell['POD_COLOR']?>" 
-														    data-opr="<?=$cell['ID_OPERATOR']?>" 
-														    data-opr-color="<?=$cell['OPR_COLOR']?>" 
-														    data-weight="<?=$cell['WEIGHT']?>" 
-														    data-seq="<?=$cell['SEQUENCE']?>" 
-														    data-status="<?=$cell['STATUS']?>"
-															<?php if ($cell['CONT_40_LOCATION']==''){ ?> 
-															    <?php if($cell['ID_CLASS_CODE']=='TC'){ ?> 
-																    class="ui-placement-disabled <?=$class_add_?>" 
-															    <?php } else if(($cell['ID_CLASS_CODE']=='S1' || $cell['ID_CLASS_CODE']=='S2') && $cell['HAS_JOB_SHIFTING']>0){ ?> 
-																    <?php if($cell['STATUS']=='P'){ ?> 
-																	class="ui-stacking-default-s2 <?=$class_add_?>" 
-																    <?php }else{ ?> 
-																	class="ui-placement-default <?=$class_add_?>" 
-																    <?php } ?>
-															    <?php } else{ ?> 
-																<?php if ($cell['SEQUENCE']!=''){ ?> 
-																    <?php if($cell['STATUS']=='P'){ ?> 
-																	class="ui-plan-defaultz <?=$class_add_?>" 
-																    <?php }else{ ?> 
-																	class="ui-placement-default <?=$class_add_?>" 
-																    <?php } ?> 
-																<?php }else if($cell['ID_CLASS_CODE']!='S1' && $cell['ID_CLASS_CODE']!='S2'){ ?> 
-																	class="ui-stacking-defaults <?=$class_add_?>" 
-																<?php } ?> 
-															    <?php } ?>  
-															<?php }else{ ?> class="uiUnAvb" 
-															    <?php } ?> 
-															<?php }else if($cell['STATUS_STACK']!='A'){ ?> class="uiMutih <?=$class_add_2?> <?=($status_row_hidden[$s-1] || $status_tier_hid) ? 'display-none' : '' ?>" <?php }else{ ?> class="ui-stacking-defaults <?=$class_add_?>" <?php } ?> id_bay="<?=$cell['ID_BAY']?>" id_cell="<?=$cell['ID_CELL']?>" row="<?=$cell['ROW_']?>" tier="<?=$cell['TIER_']?>" bay="<?=$cell['BAY']?>" deck_hatch="H" 
-															<?php if($cell['STATUS_STACK']!='X'){ ?>style="box-shadow:0 1px 2px #616161,inset 0 -1px 1px rgba(0,0,0,0.1),inset 0 1px 1px rgba(255,255,255,0.8); 
-															<?php if($cell['CONT_40_LOCATION']==''){
-																if($cell['BACKGROUND_COLOR'] != '' && $cell['ID_CLASS_CODE']!='TC'){ ?>
-																	background-image: linear-gradient(-45deg, white 40%, #<?=$cell['BACKGROUND_COLOR']?>, #<?=$cell['BACKGROUND_COLOR']?> 51%); background-color: #<?=$cell['BACKGROUND_COLOR']?>;
-
-																<?php }
-																if($cell['FOREGROUND_COLOR'] != '' && $cell['ID_CLASS_CODE']!='TC'){ ?>
-																	color: #<?=$cell['FOREGROUND_COLOR']?>;
-																<?php }
-															    }?>
-														"<?php } ?> >
-														<div class="simbil">
-															<?php 
-															if($cell['CONT_TYPE']=='HQ'){
-																?>
-															<div class="div-tl-simbol">
-																&#9701;
-															</div>	
-															<?php
-															}
-															if($cell['TL_FLAG']=='Y'){ ?>
-																<div class="div-tl-simbol">
-																	&#9660;
-																</div>	
-															<?php }/*else{ echo "C"; }*/ ?>
-															<?php if ($cell['CONT_40_LOCATION']==''){ ?> 
-																<?php if ($cell['SEQUENCE']!=''){ ?>
-																	<div class="div-job-seq">
-																		<?php if ($cell['STATUS']=='P') {
-																			echo $cell['SEQUENCE'];
-																		} else { echo "C";} 
-																		?> 
-																	</div> 
-																<?php } ?>
-																<?php
-																if($filter == 'SIZE'){
-																	echo $cell['CONT_SIZE'];
-																}else if($filter == 'WEIGHT'){
-																	echo $cell['WEIGHT'];
-																}else if($filter == 'OPERATOR'){
-																	echo $cell['ID_OPERATOR'];
-																}else{
-																	echo $cell['ID_COMMODITY'];
-																}  
-
-																if ($cell['ID_SPEC_HAND'] != '') 
-																{
-																	echo '<div class="div-job-seq-right">';
-																	echo $cell['ID_SPEC_HAND'];
-																	echo '</div>';
-																	echo '<!-- line_ID_SPEC_HAND 951 -->';
-																} 
-
-															} 
-
-															?>
-															<?php 
-															?>
-															</div>
-														<!--div style="width: 26px; border-bottom: 1px solid black; -webkit-transform: translateY(9px) translateX(-3px) rotate(-45deg);"></div>
-															<div style="width: 26px; border-bottom: 1px solid black; -webkit-transform: translateY(8px) translateX(-4px) rotate(45deg);"></div-->
-															</li>
-															<?php
-															if ($cell['STATUS_STACK'] == 'A'){
-																$next_class_tier_ = "ui-stacking-left ";
-															} else {
-																$next_class_tier_ = "";
-															}
-															$index++;
-														}
-														?>
-														<li class="<?=$next_class_tier_?> <?=($status_tier_hid) ? 'display-none' : ''?> ui-small-font">
-															<?php
-
-																//if($cell['TIER_'] != '0')
-																//{
-																	echo str_pad($cell["TIER_"],2,'0',STR_PAD_LEFT);
-																//}
-															?>
-																
-															</li>
-														<?php
-													}
-													?>
-												</ol>
-												<?php
-											}
-											?>
-										</td>
-								</tr>
-								
-								<tr><!-- 1 TR-6 -->
-									<?php
-									$odd = false;
-									if( ($bay["JML_ROW"] % 2) == 0){
-										$start = $bay["JML_ROW"];
-									}else{
-										$odd = true;
-										$start = $bay["JML_ROW"] - 1;
-									}
-
-									$tier_00 = TRUE;
-
-									$n = -2;
-									for($j = 1; $j <= $bay["JML_ROW"]; $j++){
-										$row = str_pad($start,2,'0',STR_PAD_LEFT);
-										$count_row = $this->vessel->get_count_row($ID_VESSEL, $bay['ID_BAY'],$row);
-										if($count_row->JML < 1){
-											$status_row_hid = true;
-										} else {
-											$colspan_row++;
-											$status_row_hid = false;
-										}
-										
-										array_push($status_row_hidden, $status_row_hid);
-										?>
-										<td style="padding: 0px; width: 35px;" class="boxTable <?=($count_row->JML < 1) ? 'display-none' : '' ?>">
-											<?php
-												$start_str_pad_left = str_pad($start,2,'0',STR_PAD_LEFT);
-
-
-												if($tier_00)
-												{
-													if($start_str_pad_left == '00')
-													{
-														$tier_00 = FALSE;
-													}
-
-													echo $start_str_pad_left;
-												}
-												else
-												{
-													if($start_str_pad_left != '00')
-													{
-														echo $start_str_pad_left;
-													}
-
-												}
-											?>
-										</td>
-										<?php
-										if (($start + $n) == 0){
-											if ($odd){
-												$start = $start + $n;
-											}else{
-												$n = $n * -1;
-												$start = 1;
-											}
-										}else if (($start + $n) < 0){
-											$n = $n * -1;
-											$start = 1;
-										}else{
-											$start = $start + $n;
-										}
-									}
-									?>
-									<td>
-									</td>
-								</tr>
-							</table>
-						</td>
-					<?php
-					}else if ($bay['BAY']%2==0){ ?>
-						<td align="center" id="bay_view_<?=$tab_id?>_<?=$bay['BAY']?>" style="display:none;"><!-- TD GENAP -->
-							<table style="width: <?=($bay["JML_ROW"]+1)*$size+20?>px;" frame="box"><!-- TD-TABLE GENAP -->
-								<tr><!-- 2 TR-1 -->
-									<?php
-									if ($bay_area[$count_bay+1]["BAY"]%2==0){
-										?>
-										<td colspan="<?=$bay["JML_ROW"]+1?>" align="center">
-											<div style="width:40px;">
-												<h1 style="background-color: #3a5795; color: #FFFFFF; margin-top:0px;">
-													<?=$bay["BAY"]?>								
-												</h1>
-											</div>
-										</td>
-										<?php
-									}else{
-										if (($bay["JML_ROW"]+1)%2==0){
-											$colspan_left = ($bay["JML_ROW"]+1)/2;
-											$colspan_right = ($bay["JML_ROW"]+1)/2;
-										}else{
-											$colspan_left = ($bay["JML_ROW"])/2;
-											$colspan_right = ($bay["JML_ROW"]/2)+1;
-										}
-										?>
-										<td colspan="<?=$colspan_left?>" align="right">
-											<div style="float: left; width: 15px;">
-												<?php 
-												if($vessel['ALONG_SIDE'] == 'P'){ 
-													echo 'L';
-												}else{
-													echo 'W';
-												}
-												?>
-											</div>
-											<div style="float: left; width: calc(100% - 17px)">
-												<div style="width:40px;" align="center"><h1 style="background-color: #3a5795; color: #FFFFFF; margin-top:0px;"><?=$bay["BAY"]?></h1></div>
-											</div>
-										</td>
-										<td colspan="<?=$colspan_right?>" align="left">
-											<div style="float: left; width: calc(100% - 17px);">
-												<div style="width:40px;" align="center"><h1 class='sbv_<?=$tab_id.$bay_area[$count_bay+1]["BAY"]?>' style="background-color: #ffffff; color: #3a5795; margin-top:0px; cursor: pointer;" onclick="switchBayView_<?=$tab_id?>('<?=$bay_area[$count_bay+1]["BAY"]?>','1');"><?=$bay_area[$count_bay+1]["BAY"]?></h1></div>
-											</div>
-											<div style="float: right; width: 15px;">
-												<?php 
-												if($vessel['ALONG_SIDE'] == 'P'){ 
-													echo 'W';
-												}else{
-													echo 'L';
-												}
-												?>
-											</div>
-										</td>
-										<?php
-									}
-									?>
-								</tr>
-
-								<tr><!-- kurangtd --><!-- 2 TR-2 -->
-									<?php
-									$odd = false;
-									if( ($bay["JML_ROW"] % 2) == 0){
-										$start = $bay["JML_ROW"];
-									}else{
-										$odd = true;
-										$start = $bay["JML_ROW"] - 1;
-									}
-									$n = -2;
-
-									for($j = 1; $j <= $bay["JML_ROW"]; $j++){
-										$row = str_pad($start,2,'0',STR_PAD_LEFT);
-					                    $count_row = $this->vessel->get_count_row($ID_VESSEL, $bay['ID_BAY'],$row);
-					                    if($count_row->JML < 1){
-					                        $status_row_hid = true;
-					                    } else {
-					                        $colspan_row++;
-					                        $status_row_hid = false;
-					                    }
-					                    
-					                    array_push($status_row_hidden, $status_row_hid);
-										?>
-										<td style="padding: 0px; width: 35px;" class="boxTable <?=($count_row->JML < 1) ? 'display-none' : '' ?>">
-											<?php
-												$start_str_pad_left = str_pad($start,2,'0',STR_PAD_LEFT);
-
-												// if($start_str_pad_left != '00')
-												// {
-												// 	echo $start_str_pad_left;
-												// }
-												
-												//if($start_str_pad_left != '00')
-												//{
-													echo $start_str_pad_left;
-												//}
-											?>
-										</td>
-										<?php
-										if (($start + $n) == 0){
-											if ($odd){
-												$start = $start + $n;
-											}else{
-												$n = $n * -1;
-												$start = 1;
-											}
-										}else if (($start + $n) < 0){
-											$n = $n * -1;
-											$start = 1;
-										}else{
-											$start = $start + $n;
-										}
-									}
-									?>
-									<td>
-									</td>
-								</tr>
-
-								<tr><!-- 2 TR-3 -->
-									<td colspan='<?=$bay["JML_ROW"]+1?>'>
-										<?php
-										if ($bay['ABOVE']=='AKTIF'){
-											?>
-											<ol class="selectable_<?=$tab_id?>">
-												<?php
-												$index = 0;
-												$bay_cell = $this->vessel->get_vessel_profile_cellInfo($id_ves_voyage, $class_code, $ID_VESSEL, $bay['ID_BAY'], $bay['BAY'], 'ABOVE');
-												for($j = 1; $j <= $bay["JML_TIER_ON"]; $j++){
-													for($s = 1; $s <= $bay["JML_ROW"]; $s++){
-														$cell = $bay_cell[$index];
-														if(!in_array($cell['TIER_'], $tier)){
-															$count_tier =  $this->vessel->get_count_tier($ID_VESSEL, $bay['ID_BAY'],$cell['TIER_']);
-															$status_tier_hid = ($count_tier->JML < 1) ? true : false;
-															array_push($tier, $cell['TIER_']);
-														}
-														?>
-														<?php 
-														if ($cell['TIER_'] == "80" || $cell['TIER_'] == "00") { $class_add_ = "ui-stacking-bottom";} else { $class_add_ = ""; } 
-
-														if ($cell['STATUS_STACK'] == 'X' && $bay_cell[$index-$bay["JML_ROW"]]['STATUS_STACK']=='A') { $class_add_2 = "ui-stacking-top";} else { $class_add_2 = ""; } 
-
-														if ($cell['STATUS_STACK'] == 'X' && $bay_cell[$index-1]['STATUS_STACK']=='A') { $class_add_ .= "ui-stacking-left";} else { $class_add_ .= ""; } 
-
-														if ($cell['STATUS_STACK'] == 'X' && $bay_cell[$index-1]['STATUS_STACK']=='A' && $cell['TIER_'] == $bay_cell[$index-1]['TIER_']) { $class_add_2 .= " ui-stacking-left";} else { $class_add_2 .= " "; } 
-
-														if(!empty($cell['NO_CONTAINER'])){
-															$titleli="$cell[YD_LOCATION]";
-															$class_add_ .= " tooltip ";
-														}
-														if ($cell['TL_FLAG']=='Y') {
-															$class_add_ .= " hidetl ";
-														}
-														?>
-														<li tooltip="<?=$titleli?>" id_ves_voyage="<?=$id_ves_voyage?>" class_code="<?=$class_code?>" id_vessel="<?=$ID_VESSEL?>" id_bay="<?=$bay['ID_BAY']?>" <?php if ($cell['NO_CONTAINER']!=''){ ?> 
-														    no_container="<?=$cell['NO_CONTAINER']?>" 
-														    point="<?=$cell['POINT']?>" 
-														    infotitle="<?=$cell['NO_CONTAINER'].', '.$cell['ID_POD'].', '.$cell['ID_OPERATOR']?>" 
-														    cont_size="<?=$cell['CONT_SIZE']?>" 
-														    data-pod="<?=$cell['ID_POD']?>" 
-														    data-pod-color="<?=$cell['POD_COLOR']?>" 
-														    data-opr="<?=$cell['ID_OPERATOR']?>" 
-														    data-opr-color="<?=$cell['OPR_COLOR']?>" 
-														    data-weight="<?=$cell['WEIGHT']?>" 
-														    data-seq="<?=$cell['SEQUENCE']?>" 
-														    data-status="<?=$cell['STATUS']?>"
-															    <?php if ($cell['CONT_40_LOCATION']==''){ ?> 
-																<?php if($cell['ID_CLASS_CODE']=='TC'){ ?> 
-																	    class="ui-placement-disabled <?=$class_add_?>" 
-																<?php }else{ ?> 
-																    <?php if ($cell['SEQUENCE']!=''){ ?> 
-																	<?php if($cell['STATUS']=='P'){ ?> 
-																	    class="ui-plan-defaultz  <?=$class_add_?>" 
-																	<?php }else{ ?> 
-																	    class="ui-placement-default <?=$class_add_?>" 
-																	<?php } ?> 
-																    <?php }else{ ?> 
-																	    class="ui-stacking-defaults <?=$class_add_?>" 
-																    <?php } ?> 
-																<?php } ?>  
-															    <?php }else{ ?> 
-																	class="uiUnAvb <?=$class_add_?>" 
-															    <?php } ?> 
-															<?php }else if($cell['STATUS_STACK']!='A'){ ?> 
-																	class="uiMutih <?=$class_add_2?> <?=($status_row_hidden[$s-1] || $status_tier_hid ) ? 'display-none' : '' ?>" 
-															<?php }else{ ?> 
-																	class="ui-stacking-defaults <?=$class_add_?>" 
-															<?php } ?> id_bay="<?=$cell['ID_BAY']?>" id_cell="<?=$cell['ID_CELL']?>" row="<?=$cell['ROW_']?>" tier="<?=$cell['TIER_']?>" bay="<?=$cell['BAY']?>" deck_hatch="D" 
-															<?php if($cell['STATUS_STACK']!='X'){ ?>style="box-shadow:0 1px 2px #616161,inset 0 -1px 1px rgba(0,0,0,0.1),inset 0 1px 1px rgba(255,255,255,0.8); 
-															<?php if($cell['CONT_40_LOCATION']==''){
-																if($cell['BACKGROUND_COLOR'] != '' && $cell['ID_CLASS_CODE']!='TC'){ ?>
-																	background: #<?=$cell['BACKGROUND_COLOR']?> ;
-																<?php }
-																if($cell['FOREGROUND_COLOR'] != '' && $cell['ID_CLASS_CODE']!='TC'){ ?>
-																	color: #<?=$cell['FOREGROUND_COLOR']?> ;
-																<?php }
-															}?>
-															"<? } ?> >
-															<div class="simbil">
-																<?php 
-																if($cell['CONT_TYPE']=='HQ'){
-																	?>
-																<div class="div-tl-simbol">
-																	&#9701;
-																</div>	
-																<?php
-																}
-																if($cell['TL_FLAG']=='Y'){ ?>
-																	<div class="div-tl-simbol">
-																		&#9660;
-																	</div>	
-																	<!-- <div class="corner-left-label">&#10041;</div> -->
-																<?php } ?>
-																<?php if ($cell['CONT_40_LOCATION']==''){ ?> 
-																	<?php if ($cell['SEQUENCE']!=''){ ?> 
-																		<div class="div-job-seq"> 
-																			<?php if ($cell['STATUS']=='P') { 
-																				echo $cell['SEQUENCE'];
-																			} else {
-																				echo "C";
-																			} 
-
-																			?> 
-																		</div>
-																	<?php } ?>
-																	<?php 
-																	if($filter == 'SIZE'){
-																		echo $cell['CONT_SIZE'];
-																	}else if($filter == 'WEIGHT'){
-																		echo $cell['WEIGHT'];
-																	}else if($filter == 'OPERATOR'){
-																		echo $cell['ID_OPERATOR'];
-																	}else{
-																		echo $cell['ID_COMMODITY'];
-																	}  
-																	?>
-																<?php 
-																		if ($cell['ID_SPEC_HAND'] != '') 
-																		{
-																			echo '<div class="div-job-seq-right">';
-																			echo $cell['ID_SPEC_HAND'];
-																			echo '</div>';
-																			echo '<!-- line_ID_SPEC_HAND 1277 -->';
-																		} 
-
-
-															}else{ ?> 40 <?php } ?>
-																	<?php 
-																	?>
-															</div>
-														</li>
-														<?php
-														if ($cell['STATUS_STACK'] == 'A'){
-															$next_class_tier_ = "ui-stacking-left ";
-														} else {
-															$next_class_tier_ = "";
-														}
-														$index++;
-													}
-													?>
-													<li class="<?=$next_class_tier_?> <?=($status_tier_hid) ? 'display-none' : ''?> ui-small-font">
-													<?php
-
-														if($cell['TIER_'] != '0')
-														{
-															echo str_pad($cell["TIER_"],2,'0',STR_PAD_LEFT);
-														}
-													?>
-													</li>
-													<?php
-												}
-												?>
-											</ol>
-											<?php
-										}
-										?>
-									</td>
-								</tr>
-
-								<tr><!-- 2 TR-4 -->
-									<td title="cover" colspan="<?=$bay["JML_ROW"]?>" style="background:#3a5795" height="5px"> </td>
-									<td width="<?=$size?>px"></td>
-								</tr>
-
-								<tr><!-- 2 TR-5 -->
-									<td colspan='<?=$colspan_row?>'>
-										<?php
-										if ($bay['BELOW']=='AKTIF'){
-											?>
-											<ol class="selectable_<?=$tab_id?>">
-												<?php
-												$index = 0;
-												$bay_cell = $this->vessel->get_vessel_profile_cellInfo($id_ves_voyage, $class_code, $ID_VESSEL, $bay['ID_BAY'], $bay['BAY'], 'BELOW');
-												for($j = 1; $j <= $bay["JML_TIER_UNDER"]; $j++){
-													for($s = 1; $s <= $bay["JML_ROW"]; $s++){
-														$cell = $bay_cell[$index];
-														if(!in_array($cell['TIER_'], $tier)){
-															$count_tier =  $this->vessel->get_count_tier($ID_VESSEL, $bay['ID_BAY'],$cell['TIER_']);
-															$status_tier_hid = ($count_tier->JML < 1) ? true : false;
-															array_push($tier, $cell['TIER_']);
-														}
-														?>
-														<?php 
-														if ($cell['TIER_'] == "80" || $cell['TIER_'] == "00") { $class_add_ = "ui-stacking-bottom";} else { $class_add_ = ""; } 
-
-														if ($cell['STATUS_STACK'] == 'X' && $bay_cell[$index-$bay["JML_ROW"]]['STATUS_STACK']=='A') { $class_add_2 = "ui-stacking-top";} else { $class_add_2 = ""; } 
-
-														if ($cell['STATUS_STACK'] == 'X' && $bay_cell[$index-1]['STATUS_STACK']=='A' && $cell['TIER_'] == $bay_cell[$index-1]['TIER_']) { $class_add_2 .= " ui-stacking-left";} else { $class_add_2 .= " "; } 
-
-														if(!empty($cell['NO_CONTAINER'])){
-															$titleli="$cell[YD_LOCATION]";
-															$class_add_ .= " tooltip ";
-														}
-														if ($cell['TL_FLAG']=='Y') {
-															$class_add_ .= " hidetl ";
-														}
-														?>
-														<li tooltip="<?=$titleli?>" id_ves_voyage="<?=$id_ves_voyage?>" class_code="<?=$class_code?>" id_vessel="<?=$ID_VESSEL?>" id_bay="<?=$bay['ID_BAY']?>" 
-															<?php if ($cell['NO_CONTAINER']!=''){ ?> 
-																no_container="<?=$cell['NO_CONTAINER']?>"
-																point="<?=$cell['POINT']?>"
-																infotitle="<?=$cell['NO_CONTAINER'].', '.$cell['ID_POD'].', '.$cell['ID_OPERATOR']?>"
-																cont_size="<?=$cell['CONT_SIZE']?>"
-																data-pod="<?=$cell['ID_POD']?>" data-pod-color="<?=$cell['POD_COLOR']?>" data-opr="<?=$cell['ID_OPERATOR']?>" data-opr-color="<?=$cell['OPR_COLOR']?>" data-weight="<?=$cell['WEIGHT']?>" data-seq="<?=$cell['SEQUENCE']?>"
-																data-status="<?=$cell['STATUS']?>"
-																<?php if ($cell['CONT_40_LOCATION']==''){ ?>
-																    <?php if($cell['ID_CLASS_CODE']=='TC'){ ?> 
-																	    class="ui-placement-disabled <?=$class_add_?>"
-																    <?php }else{ ?> 
-																	<?php if ($cell['SEQUENCE']!=''){ ?> 
-																		<?php if($cell['STATUS']=='P'){ ?> 
-																			class="ui-plan-defaultz <?=$class_add_?>"
-																			<?php 
-																		}else{ ?> 
-																			class="ui-placement-default <?=$class_add_?>"
-																		<?php } ?>
-																	<?php }else{ ?> 
-																		class="ui-stacking-defaults <?=$class_add_?>" 
-																	<?php } ?>
-																    <?php } ?> 
-																<?php }else{ ?> 
-																	class="uiUnAvb <?=$class_add_?>" 
-																<?php } ?>
-															<?php }else if($cell['STATUS_STACK']!='A'){ ?>
-																class="uiMutih <?=$class_add_2?> <?=($status_row_hidden[$s-1] || $status_tier_hid) ? 'display-none' : '' ?>"
-															<?php }else{ ?>
-																class="ui-stacking-defaults <?=$class_add_?>" 
-															<?php } ?> 
-															id_bay="<?=$cell['ID_BAY']?>" id_cell="<?=$cell['ID_CELL']?>" row="<?=$cell['ROW_']?>" tier="<?=$cell['TIER_']?>" bay="<?=$cell['BAY']?>" deck_hatch="H" 
-															<?php if($cell['STATUS_STACK']!='X'){ ?>style="box-shadow:0 1px 2px #616161,inset 0 -1px 1px rgba(0,0,0,0.1),inset 0 1px 1px rgba(255,255,255,0.8); 
-															<?php if($cell['CONT_40_LOCATION']==''){
-																if($cell['BACKGROUND_COLOR'] != '' && $cell['ID_CLASS_CODE']!='TC'){ ?>
-																	background: #<?=$cell['BACKGROUND_COLOR']?>;
-
-																<?php }
-																if($cell['FOREGROUND_COLOR'] != '' && $cell['ID_CLASS_CODE']!='TC'){ ?>
-																	color: #<?=$cell['FOREGROUND_COLOR']?>;
-
-																<?php }
-															    }?>
-															"<? } ?> >
-															<div class="simbil">
-																<?php 
-																if($cell['CONT_TYPE']=='HQ'){
-																	?>
-																<div class="div-tl-simbol">
-																	&#9701;
-																</div>	
-																<?php
-																}
-																if($cell['TL_FLAG']=='Y'){ ?>
-																	<div class="div-tl-simbol">
-																		&#9660;			
-																	</div>	
-																<?php } ?>
-																<?php if ($cell['CONT_40_LOCATION']==''){ ?> 
-																	<?php if ($cell['SEQUENCE']!=''){ ?> 
-																		<div class="div-job-seq">
-																			<?php 
-																				if ($cell['STATUS']=='P') 
-																				{
-																					echo $cell['SEQUENCE'];
-																				} 
-																				else 
-																				{ 
-																					echo "C"; 
-																				} 
-																			?> 
-																		</div>
-																	<?php } ?> 
-																	<?php
-																	if($filter == 'SIZE'){
-																		echo $cell['CONT_SIZE'];
-																	}else if($filter == 'WEIGHT'){
-																		echo $cell['WEIGHT'];
-																	}else if($filter == 'OPERATOR'){
-																		echo $cell['ID_OPERATOR'];
-																	}else{
-																		echo $cell['ID_COMMODITY'];
-																	}  
-
-																		if ($cell['ID_SPEC_HAND'] != '') 
-																		{
-																			echo '<div class="div-job-seq-right">';
-																			echo $cell['ID_SPEC_HAND'];
-																			echo '</div>';
-																			echo '<!-- line_ID_SPEC_HAND 1431 -->';
-																		} 
-																	?>
-																<?php }else{ ?> 40 <?php } ?>
-																	<?php 
-																	?>
-															</li>
-															<?php
-															if ($cell['STATUS_STACK'] == 'A'){
-																$next_class_tier_ = "ui-stacking-left ";
-															} else {
-																$next_class_tier_ = "";
-															}
-															$index++;
-														}
-														?>
-														<li class="<?=$next_class_tier_?> <?=($status_tier_hid) ? 'display-none' : ''?> ui-small-font">
-														<?php
-															// if($cell['TIER_'] != '0')
-															// {
-															// 	echo str_pad($cell["TIER_"],2,'0',STR_PAD_LEFT);
-															// }
-
-															//if($cell['TIER_'] != '0')
-															//{
-																echo str_pad($cell["TIER_"],2,'0',STR_PAD_LEFT);
-															//}
-														?>
-														</li>
-														<?php
-													}
-													?>
-												</ol>
-												<?php
-											}
-											?>
-										</td>
-								</tr>
-
-								<tr><!-- 2 TR-6 -->
-									<?php
-									$odd = false;
-									if( ($bay["JML_ROW"] % 2) == 0){
-										$start = $bay["JML_ROW"];
-									}else{
-										$odd = true;
-										$start = $bay["JML_ROW"] - 1;
-									}
-									$tier_00 = TRUE;
-									$n = -2;
-									for($j = 1; $j <= $bay["JML_ROW"]; $j++){
-										$row = str_pad($start,2,'0',STR_PAD_LEFT);
-									 	$count_row = $this->vessel->get_count_row($ID_VESSEL, $bay['ID_BAY'],$row);
-										if($count_row->JML < 1){
-											$status_row_hid = true;
-										} else {
-											$colspan_row++;
-											$status_row_hid = false;
-										}
-										
-										array_push($status_row_hidden, $status_row_hid);
-										?>
-										<td style="padding: 0px; width: 35px;" class="boxTable <?=($count_row->JML < 1) ? 'display-none' : '' ?>">
-											<?php
-												$start_str_pad_left = str_pad($start,2,'0',STR_PAD_LEFT);
-
-												if($tier_00)
-												{
-													if($start_str_pad_left == '00')
-													{
-														$tier_00 = FALSE;
-													}
-													
-													echo $start_str_pad_left;
-												}
-												else
-												{
-													if($start_str_pad_left != '00')
-													{
-														echo $start_str_pad_left;
-													}
-
-												}
-											?>
-										</td>
-										<?php
-										if (($start + $n) == 0){
-											if ($odd){
-												$start = $start + $n;
-											}else{
-												$n = $n * -1;
-												$start = 1;
-											}
-										}else if (($start + $n) < 0){
-											$n = $n * -1;
-											$start = 1;
-										}else{
-											$start = $start + $n;
-										}
-									}
-									?>
-									<td>
-									</td>
-								</tr>
-							</table>
-						</td>
-					<?php } ?>
-
+						<!--div style="width: 26px; border-bottom: 1px solid black; -webkit-transform: translateY(9px) translateX(-3px) rotate(-45deg);"></div>
+							<span class="text_">1</span-->
+							</li>
+							<?php
+							if ($cell['STATUS_STACK'] == 'A'){
+								$next_class_tier_ = "ui-stacking-left ";
+							} else {
+								$next_class_tier_ = "";
+							}
+							$index++;
+						}
+						?>
+						<li class="<?=$next_class_tier_?> ui-small-font"><?=$cell["TIER_"]?></li>
 						<?php
-					$count_bay++;
+					}
+					?>
+				</ol>
+				<?php
+			}
+			?>
+		</td>
+	</tr>
+	<tr>
+
+		<!-- <td title="cover" colspan="<?=$bay["JML_ROW"]?>" style="background:#3a5795" height="5px"> </td> -->
+
+
+		<td title="cover" colspan="<?=$bay["JML_ROW"]?>" style="height: 2px;" >
+			<?php if($bay["HATCH_NUMBER"]>=1){
+				for($tt=1;$tt<=$bay["HATCH_NUMBER"];$tt++){
+					if($tt > 1){
+						?>
+						<div style="height: 5px; width: 3px; float: left">&nbsp;</div>
+						<?php
+					}
+
+					?>
+					<!--<td title="cover" colspan="<?=$bay["JML_ROW"]/$bay["HATCH_NUMBER"]?>" style="background:#3a5795;padding-left:30px;" height="5px" > </td>-->
+					<div class="palka" style="width: calc(<?=100/$bay["HATCH_NUMBER"]?>% - 2px)">&nbsp;</div>
+					<?php
+				}
+			}
+			?>
+		</td>
+
+		<td width="<?=$size?>px"></td>
+	</tr>
+
+	<tr>
+		<td colspan='<?=$bay["JML_ROW"]+1?>'>
+			<?php
+			if ($bay['BELOW']=='AKTIF'){
+				?>
+				<ol class="selectable_<?=$tab_id?>">
+					<?php
+					$index = 0;
+					$bay_cell = $this->vessel->get_vessel_profile_cellInfo($id_ves_voyage, $class_code, $ID_VESSEL, $bay['ID_BAY'], $bay['BAY'], 'BELOW');
+					for($j = 1; $j <= $bay["JML_TIER_UNDER"]; $j++){
+						for($s = 1; $s <= $bay["JML_ROW"]; $s++){
+							$cell = $bay_cell[$index];
+							?>
+							<?php 
+						// var_dump($cell['STATUS_STACK']);
+						// var_dump($bay_cell[$index-1]['STATUS_STACK']);
+						// var_dump($bay_cell[$index+1]['STATUS_STACK']);
+						// var_dump($bay_cell[$index-$bay["JML_ROW"]]['NO_CONTAINER']);
+
+							if ($cell['TIER_'] == "80" || $cell['TIER_'] == "00") { $class_add_ = "ui-stacking-bottom";} else { $class_add_ = ""; } 
+
+							if ($cell['STATUS_STACK'] == 'X' && $bay_cell[$index-$bay["JML_ROW"]]['STATUS_STACK']=='A') { $class_add_2 = " ui-stacking-top";} else { $class_add_2 = " "; } 
+
+							if ($cell['STATUS_STACK'] == 'X' && $bay_cell[$index-1]['STATUS_STACK']=='A' && $cell['TIER_'] == $bay_cell[$index-1]['TIER_']) { $class_add_2 .= " ui-stacking-left";} else { $class_add_2 .= " "; } 
+
+							if ($cell['STATUS_STACK'] == 'X' && $bay_cell[$index-1]['STATUS_STACK']=='A' && $cell['TIER_'] == $bay_cell[$index-1]['TIER_']) { $class_add_2 .= " ui-stacking-left";} else { $class_add_2 .= " "; } 
+
+							if(!empty($cell['NO_CONTAINER'])){
+								$titleli="$cell[YD_LOCATION]";
+								$class_add_ .= " tooltip ";
+							}
+							if ($cell['TL_FLAG']=='Y') {
+								$class_add_ .= " hidetl ";
+							}
+							?>
+							<li tooltip="<?=$titleli?>" id_ves_voyage="<?=$id_ves_voyage?>" class_code="<?=$class_code?>" id_vessel="<?=$ID_VESSEL?>" id_bay="<?=$bay['ID_BAY']?>" <?php if ($cell['NO_CONTAINER']!=''){ ?> 
+							    no_container="<?=$cell['NO_CONTAINER']?>" 
+							    point="<?=$cell['POINT']?>" 
+							    infotitle="<?=$cell['NO_CONTAINER']?><?php echo ($cell['TL_FLAG']=='Y') ? ' - TL' : ''; ?>" 
+							    cont_size="<?=$cell['CONT_SIZE']?>" 
+							    data-pod="<?=$cell['ID_POD']?>" 
+							    data-pod-color="<?=$cell['POD_COLOR']?>" 
+							    data-opr="<?=$cell['ID_OPERATOR']?>" 
+							    data-opr-color="<?=$cell['OPR_COLOR']?>" 
+							    data-weight="<?=$cell['WEIGHT']?>" 
+							    data-seq="<?=$cell['SEQUENCE']?>" 
+							    data-status="<?=$cell['STATUS']?>"
+								<?php if ($cell['CONT_40_LOCATION']==''){ ?> 
+								    <?php if($cell['ID_CLASS_CODE']=='TC'){ ?> 
+									    class="ui-placement-disabled <?=$class_add_?>" 
+								    <?php } else if(($cell['ID_CLASS_CODE']=='S1' || $cell['ID_CLASS_CODE']=='S2') && $cell['HAS_JOB_SHIFTING']>0){ ?> 
+									    <?php if($cell['STATUS']=='P'){ ?> 
+										class="ui-stacking-default-s2 <?=$class_add_?>" 
+									    <?php }else{ ?> 
+										class="ui-placement-default <?=$class_add_?>" 
+									    <?php } ?>
+								    <?php } else{ ?> 
+									<?php if ($cell['SEQUENCE']!=''){ ?> 
+									    <?php if($cell['STATUS']=='P'){ ?> 
+										class="ui-plan-defaultz <?=$class_add_?>" 
+									    <?php }else{ ?> 
+										class="ui-placement-default <?=$class_add_?>" 
+									    <?php } ?> 
+									<?php }else if($cell['ID_CLASS_CODE']!='S1' && $cell['ID_CLASS_CODE']!='S2'){ ?> 
+										class="ui-stacking-defaults <?=$class_add_?>" 
+									<?php } ?> 
+								    <?php } ?>  
+								<?php }else{ ?> class="uiUnAvb" 
+								    <?php } ?> 
+								<?php }else if($cell['STATUS_STACK']!='A'){ ?> class="uiMutih <?=$class_add_2?>" <?php }else{ ?> class="ui-stacking-defaults <?=$class_add_?>" <?php } ?> id_bay="<?=$cell['ID_BAY']?>" id_cell="<?=$cell['ID_CELL']?>" row="<?=$cell['ROW_']?>" tier="<?=$cell['TIER_']?>" bay="<?=$cell['BAY']?>" deck_hatch="H" 
+								<?php if($cell['STATUS_STACK']!='X'){ ?>style="box-shadow:0 1px 2px #616161,inset 0 -1px 1px rgba(0,0,0,0.1),inset 0 1px 1px rgba(255,255,255,0.8); 
+								<?php if($cell['CONT_40_LOCATION']==''){
+									if($cell['BACKGROUND_COLOR'] != '' && $cell['ID_CLASS_CODE']!='TC'){ ?>
+										background-image: linear-gradient(-45deg, white 40%, #<?=$cell['BACKGROUND_COLOR']?>, #<?=$cell['BACKGROUND_COLOR']?> 51%); background-color: #<?=$cell['BACKGROUND_COLOR']?>;
+
+									<?php }
+									if($cell['FOREGROUND_COLOR'] != '' && $cell['ID_CLASS_CODE']!='TC'){ ?>
+										color: #<?=$cell['FOREGROUND_COLOR']?>;
+									<?php }
+								    }?>
+							"<?php } ?> >
+							<div class="simbil">
+								<?php 
+									echo $cell['ID_SPEC_HAND'];
+
+								if($cell['CONT_TYPE']=='HQ'){
+									?>
+								<div class="div-tl-simbol">
+									&#9701;
+								</div>	
+								<?php
+								}
+								if($cell['TL_FLAG']=='Y'){ ?>
+									<div class="div-tl-simbol">
+										&#9660;
+									</div>	
+								<?php }/*else{ echo "C"; }*/ ?>
+								<?php if ($cell['CONT_40_LOCATION']==''){ ?> 
+									<?php if ($cell['SEQUENCE']!=''){ ?>
+										<div class="div-job-seq">
+											<?php if ($cell['STATUS']=='P') {
+												echo $cell['SEQUENCE'];
+											} else { echo "C";} ?> 
+										</div> 
+									<?php } ?>
+									<?php
+									if($filter == 'SIZE'){
+										echo $cell['CONT_SIZE'];
+									}else if($filter == 'WEIGHT'){
+										echo $cell['WEIGHT'];
+									}else if($filter == 'OPERATOR'){
+										echo $cell['ID_OPERATOR'];
+									}else{
+										echo $cell['ID_COMMODITY'];
+									}  } ?>
+								</div>
+							<!--div style="width: 26px; border-bottom: 1px solid black; -webkit-transform: translateY(9px) translateX(-3px) rotate(-45deg);"></div>
+								<div style="width: 26px; border-bottom: 1px solid black; -webkit-transform: translateY(8px) translateX(-4px) rotate(45deg);"></div-->
+								</li>
+								<?php
+								if ($cell['STATUS_STACK'] == 'A'){
+									$next_class_tier_ = "ui-stacking-left ";
+								} else {
+									$next_class_tier_ = "";
+								}
+								$index++;
+							}
+							?>
+							<li class="<?=$next_class_tier_?> ui-small-font"><?=str_pad($cell["TIER_"],2,'0',STR_PAD_LEFT)?></li>
+							<?php
+						}
+						?>
+					</ol>
+					<?php
+				}
+				?>
+			</td>
+		</tr>
+		<tr>
+			<?php
+			$odd = false;
+			if( ($bay["JML_ROW"] % 2) == 0){
+				$start = $bay["JML_ROW"];
+			}else{
+				$odd = true;
+				$start = $bay["JML_ROW"] - 1;
+			}
+
+			$n = -2;
+			for($j = 1; $j <= $bay["JML_ROW"]; $j++){
+				?>
+				<td style="padding: 0px; width: <?=$size-$bay["JML_ROW"]?>px;">
+					<center class="ui-small-font"><?=str_pad($start,2,'0',STR_PAD_LEFT)?></center>
+				</td>
+				<?php
+				if (($start + $n) == 0){
+					if ($odd){
+						$start = $start + $n;
+					}else{
+						$n = $n * -1;
+						$start = 1;
+					}
+				}else if (($start + $n) < 0){
+					$n = $n * -1;
+					$start = 1;
+				}else{
+					$start = $start + $n;
+				}
+			}
+			?>
+			<td>
+			</td>
+		</tr>
+	</table>
+</td>
+<?php
+}else if ($bay['BAY']%2==0){
+	?>
+	<td align="center" id="bay_view_<?=$tab_id?>_<?=$bay['BAY']?>" style="display:none;">
+		<table style="width: <?=($bay["JML_ROW"]+1)*$size+20?>px;" frame="box">
+			<tr>
+				<?php
+				if ($bay_area[$count_bay+1]["BAY"]%2==0){
+					?>
+					<td colspan="<?=$bay["JML_ROW"]+1?>" align="center">
+						<div style="width:40px;"><h1 style="background-color: #3a5795; color: #FFFFFF; margin-top:0px;"><?=$bay["BAY"]?></h1></div>
+					</td>
+					<?php
+				}else{
+					if (($bay["JML_ROW"]+1)%2==0){
+						$colspan_left = ($bay["JML_ROW"]+1)/2;
+						$colspan_right = ($bay["JML_ROW"]+1)/2;
+					}else{
+						$colspan_left = ($bay["JML_ROW"])/2;
+						$colspan_right = ($bay["JML_ROW"]/2)+1;
+					}
+					?>
+					<td colspan="<?=$colspan_left?>" align="right">
+						<div style="float: left; width: 15px;">
+							<?php 
+							if($vessel['ALONG_SIDE'] == 'P'){ 
+								echo 'L';
+							}else{
+								echo 'W';
+							}
+							?>
+						</div>
+						<div style="float: left; width: calc(100% - 17px)">
+							<div style="width:40px;" align="center"><h1 style="background-color: #3a5795; color: #FFFFFF; margin-top:0px;"><?=$bay["BAY"]?></h1></div>
+						</div>
+					</td>
+					<td colspan="<?=$colspan_right?>" align="left">
+						<div style="float: left; width: calc(100% - 17px);">
+							<div style="width:40px;" align="center"><h1 class='sbv_<?=$tab_id.$bay_area[$count_bay+1]["BAY"]?>' style="background-color: #ffffff; color: #3a5795; margin-top:0px; cursor: pointer;" onclick="switchBayView_<?=$tab_id?>('<?=$bay_area[$count_bay+1]["BAY"]?>','1');"><?=$bay_area[$count_bay+1]["BAY"]?></h1></div>
+						</div>
+						<div style="float: right; width: 15px;">
+							<?php 
+							if($vessel['ALONG_SIDE'] == 'P'){ 
+								echo 'W';
+							}else{
+								echo 'L';
+							}
+							?>
+						</div>
+					</td>
+					<?php
 				}
 				?>
 			</tr>
+			<tr>
+				<?php
+				$odd = false;
+				if( ($bay["JML_ROW"] % 2) == 0){
+					$start = $bay["JML_ROW"];
+				}else{
+					$odd = true;
+					$start = $bay["JML_ROW"] - 1;
+				}
+
+				for($j = 1; $j <= $bay["JML_ROW"]; $j++){
+					?>
+					<td style="padding: 0px; width: <?=$size-$bay["JML_ROW"]?>px;">
+						<center class="ui-small-font"><?=str_pad($start,2,'0',STR_PAD_LEFT)?></center>
+					</td>
+					<?php
+					if (($start + $n) == 0){
+						if ($odd){
+							$start = $start + $n;
+						}else{
+							$n = $n * -1;
+							$start = 1;
+						}
+					}else if (($start + $n) < 0){
+						$n = $n * -1;
+						$start = 1;
+					}else{
+						$start = $start + $n;
+					}
+				}
+				?>
+				<td>
+				</td>
+			</tr>
+			<tr>
+				<td colspan='<?=$bay["JML_ROW"]+1?>'>
+					<?php
+					if ($bay['ABOVE']=='AKTIF'){
+						?>
+						<ol class="selectable_<?=$tab_id?>">
+							<?php
+							$index = 0;
+							$bay_cell = $this->vessel->get_vessel_profile_cellInfo($id_ves_voyage, $class_code, $ID_VESSEL, $bay['ID_BAY'], $bay['BAY'], 'ABOVE');
+							for($j = 1; $j <= $bay["JML_TIER_ON"]; $j++){
+								for($s = 1; $s <= $bay["JML_ROW"]; $s++){
+									$cell = $bay_cell[$index];
+									?>
+									<?php 
+									if ($cell['TIER_'] == "80" || $cell['TIER_'] == "00") { $class_add_ = "ui-stacking-bottom";} else { $class_add_ = ""; } 
+
+									if ($cell['STATUS_STACK'] == 'X' && $bay_cell[$index-$bay["JML_ROW"]]['STATUS_STACK']=='A') { $class_add_2 = "ui-stacking-top";} else { $class_add_2 = ""; } 
+
+									if ($cell['STATUS_STACK'] == 'X' && $bay_cell[$index-1]['STATUS_STACK']=='A') { $class_add_ .= "ui-stacking-left";} else { $class_add_ .= ""; } 
+
+									if ($cell['STATUS_STACK'] == 'X' && $bay_cell[$index-1]['STATUS_STACK']=='A' && $cell['TIER_'] == $bay_cell[$index-1]['TIER_']) { $class_add_2 .= " ui-stacking-left";} else { $class_add_2 .= " "; } 
+
+									if(!empty($cell['NO_CONTAINER'])){
+										$titleli="$cell[YD_LOCATION]";
+										$class_add_ .= " tooltip ";
+									}
+									if ($cell['TL_FLAG']=='Y') {
+										$class_add_ .= " hidetl ";
+									}
+									?>
+									<li tooltip="<?=$titleli?>" id_ves_voyage="<?=$id_ves_voyage?>" class_code="<?=$class_code?>" id_vessel="<?=$ID_VESSEL?>" id_bay="<?=$bay['ID_BAY']?>" <?php if ($cell['NO_CONTAINER']!=''){ ?> 
+									    no_container="<?=$cell['NO_CONTAINER']?>" 
+									    point="<?=$cell['POINT']?>" 
+									    infotitle="<?=$cell['NO_CONTAINER'].', '.$cell['ID_POD'].', '.$cell['ID_OPERATOR']?>" 
+									    cont_size="<?=$cell['CONT_SIZE']?>" 
+									    data-pod="<?=$cell['ID_POD']?>" 
+									    data-pod-color="<?=$cell['POD_COLOR']?>" 
+									    data-opr="<?=$cell['ID_OPERATOR']?>" 
+									    data-opr-color="<?=$cell['OPR_COLOR']?>" 
+									    data-weight="<?=$cell['WEIGHT']?>" 
+									    data-seq="<?=$cell['SEQUENCE']?>" 
+									    data-status="<?=$cell['STATUS']?>"
+										    <?php if ($cell['CONT_40_LOCATION']==''){ ?> 
+											<?php if($cell['ID_CLASS_CODE']=='TC'){ ?> 
+												    class="ui-placement-disabled <?=$class_add_?>" 
+											<?php }else{ ?> 
+											    <?php if ($cell['SEQUENCE']!=''){ ?> 
+												<?php if($cell['STATUS']=='P'){ ?> 
+												    class="ui-plan-defaultz  <?=$class_add_?>" 
+												<?php }else{ ?> 
+												    class="ui-placement-default <?=$class_add_?>" 
+												<?php } ?> 
+											    <?php }else{ ?> 
+												    class="ui-stacking-defaults <?=$class_add_?>" 
+											    <?php } ?> 
+											<?php } ?>  
+										    <?php }else{ ?> 
+												class="uiUnAvb <?=$class_add_?>" 
+										    <?php } ?> 
+										<?php }else if($cell['STATUS_STACK']!='A'){ ?> 
+												class="uiMutih <?=$class_add_2?>" 
+										<?php }else{ ?> 
+												class="ui-stacking-defaults <?=$class_add_?>" 
+										<?php } ?> id_bay="<?=$cell['ID_BAY']?>" id_cell="<?=$cell['ID_CELL']?>" row="<?=$cell['ROW_']?>" tier="<?=$cell['TIER_']?>" bay="<?=$cell['BAY']?>" deck_hatch="D" 
+										<?php if($cell['STATUS_STACK']!='X'){ ?>style="box-shadow:0 1px 2px #616161,inset 0 -1px 1px rgba(0,0,0,0.1),inset 0 1px 1px rgba(255,255,255,0.8); 
+										<?php if($cell['CONT_40_LOCATION']==''){
+											if($cell['BACKGROUND_COLOR'] != '' && $cell['ID_CLASS_CODE']!='TC'){ ?>
+												background: #<?=$cell['BACKGROUND_COLOR']?> ;
+											<?php }
+											if($cell['FOREGROUND_COLOR'] != '' && $cell['ID_CLASS_CODE']!='TC'){ ?>
+												color: #<?=$cell['FOREGROUND_COLOR']?> ;
+											<?php }
+										}?>
+										"<? } ?> >
+										<div class="simbil">
+											<?php 
+												echo $cell['ID_SPEC_HAND'];
+
+											if($cell['CONT_TYPE']=='HQ'){
+												?>
+											<div class="div-tl-simbol">
+												&#9701;
+											</div>	
+											<?php
+											}
+											if($cell['TL_FLAG']=='Y'){ ?>
+												<div class="div-tl-simbol">
+													&#9660;
+												</div>	
+												<!-- <div class="corner-left-label">&#10041;</div> -->
+											<?php } ?>
+											<?php if ($cell['CONT_40_LOCATION']==''){ ?> 
+												<?php if ($cell['SEQUENCE']!=''){ ?> 
+													<div class="div-job-seq"> 
+														<?php if ($cell['STATUS']=='P') { 
+															echo $cell['SEQUENCE'];
+														} else {
+															echo "C";
+														} ?> 
+													</div>
+												<?php } ?>
+												<?php 
+												if($filter == 'SIZE'){
+													echo $cell['CONT_SIZE'];
+												}else if($filter == 'WEIGHT'){
+													echo $cell['WEIGHT'];
+												}else if($filter == 'OPERATOR'){
+													echo $cell['ID_OPERATOR'];
+												}else{
+													echo $cell['ID_COMMODITY'];
+												}  ?>
+											<?php }else{ ?> 40 <?php } ?>
+										</div>
+									</li>
+									<?php
+									if ($cell['STATUS_STACK'] == 'A'){
+										$next_class_tier_ = "ui-stacking-left ";
+									} else {
+										$next_class_tier_ = "";
+									}
+									$index++;
+								}
+								?>
+								<li class="<?=$next_class_tier_?> ui-small-font"><?=$cell["TIER_"]?></li>
+								<?php
+							}
+							?>
+						</ol>
+						<?php
+					}
+					?>
+				</td>
+			</tr>
+			<tr>
+				<td title="cover" colspan="<?=$bay["JML_ROW"]?>" style="background:#3a5795" height="5px"> </td>
+				<td width="<?=$size?>px"></td>
+			</tr>
+
+			<tr>
+				<td colspan='<?=$bay["JML_ROW"]+1?>'>
+					<?php
+					if ($bay['BELOW']=='AKTIF'){
+						?>
+						<ol class="selectable_<?=$tab_id?>">
+							<?php
+							$index = 0;
+							$bay_cell = $this->vessel->get_vessel_profile_cellInfo($id_ves_voyage, $class_code, $ID_VESSEL, $bay['ID_BAY'], $bay['BAY'], 'BELOW');
+							for($j = 1; $j <= $bay["JML_TIER_UNDER"]; $j++){
+								for($s = 1; $s <= $bay["JML_ROW"]; $s++){
+									$cell = $bay_cell[$index];
+									?>
+									<?php 
+									if ($cell['TIER_'] == "80" || $cell['TIER_'] == "00") { $class_add_ = "ui-stacking-bottom";} else { $class_add_ = ""; } 
+
+									if ($cell['STATUS_STACK'] == 'X' && $bay_cell[$index-$bay["JML_ROW"]]['STATUS_STACK']=='A') { $class_add_2 = "ui-stacking-top";} else { $class_add_2 = ""; } 
+
+									if ($cell['STATUS_STACK'] == 'X' && $bay_cell[$index-1]['STATUS_STACK']=='A' && $cell['TIER_'] == $bay_cell[$index-1]['TIER_']) { $class_add_2 .= " ui-stacking-left";} else { $class_add_2 .= " "; } 
+
+									if(!empty($cell['NO_CONTAINER'])){
+										$titleli="$cell[YD_LOCATION]";
+										$class_add_ .= " tooltip ";
+									}
+									if ($cell['TL_FLAG']=='Y') {
+										$class_add_ .= " hidetl ";
+									}
+									?>
+									<li tooltip="<?=$titleli?>" id_ves_voyage="<?=$id_ves_voyage?>" class_code="<?=$class_code?>" id_vessel="<?=$ID_VESSEL?>" id_bay="<?=$bay['ID_BAY']?>" 
+										<?php if ($cell['NO_CONTAINER']!=''){ ?> 
+											no_container="<?=$cell['NO_CONTAINER']?>"
+											point="<?=$cell['POINT']?>"
+											infotitle="<?=$cell['NO_CONTAINER'].', '.$cell['ID_POD'].', '.$cell['ID_OPERATOR']?>"
+											cont_size="<?=$cell['CONT_SIZE']?>"
+											data-pod="<?=$cell['ID_POD']?>" data-pod-color="<?=$cell['POD_COLOR']?>" data-opr="<?=$cell['ID_OPERATOR']?>" data-opr-color="<?=$cell['OPR_COLOR']?>" data-weight="<?=$cell['WEIGHT']?>" data-seq="<?=$cell['SEQUENCE']?>"
+											data-status="<?=$cell['STATUS']?>"
+											<?php if ($cell['CONT_40_LOCATION']==''){ ?>
+											    <?php if($cell['ID_CLASS_CODE']=='TC'){ ?> 
+												    class="ui-placement-disabled <?=$class_add_?>"
+											    <?php }else{ ?> 
+												<?php if ($cell['SEQUENCE']!=''){ ?> 
+													<?php if($cell['STATUS']=='P'){ ?> 
+														class="ui-plan-defaultz <?=$class_add_?>"
+														<?php 
+													}else{ ?> 
+														class="ui-placement-default <?=$class_add_?>"
+													<?php } ?>
+												<?php }else{ ?> 
+													class="ui-stacking-defaults <?=$class_add_?>" 
+												<?php } ?>
+											    <?php } ?> 
+											<?php }else{ ?> 
+												class="uiUnAvb <?=$class_add_?>" 
+											<?php } ?>
+										<?php }else if($cell['STATUS_STACK']!='A'){ ?>
+											class="uiMutih <?=$class_add_2?>"
+										<?php }else{ ?>
+											class="ui-stacking-defaults <?=$class_add_?>" 
+										<?php } ?> 
+										id_bay="<?=$cell['ID_BAY']?>" id_cell="<?=$cell['ID_CELL']?>" row="<?=$cell['ROW_']?>" tier="<?=$cell['TIER_']?>" bay="<?=$cell['BAY']?>" deck_hatch="H" 
+										<?php if($cell['STATUS_STACK']!='X'){ ?>style="box-shadow:0 1px 2px #616161,inset 0 -1px 1px rgba(0,0,0,0.1),inset 0 1px 1px rgba(255,255,255,0.8); 
+										<?php if($cell['CONT_40_LOCATION']==''){
+											if($cell['BACKGROUND_COLOR'] != '' && $cell['ID_CLASS_CODE']!='TC'){ ?>
+												background: #<?=$cell['BACKGROUND_COLOR']?>;
+
+											<?php }
+											if($cell['FOREGROUND_COLOR'] != '' && $cell['ID_CLASS_CODE']!='TC'){ ?>
+												color: #<?=$cell['FOREGROUND_COLOR']?>;
+
+											<?php }
+										    }?>
+										"<? } ?> >
+										<div class="simbil">
+											<?php 
+												echo $cell['ID_SPEC_HAND'];
+
+											if($cell['CONT_TYPE']=='HQ'){
+												?>
+											<div class="div-tl-simbol">
+												&#9701;
+											</div>	
+											<?php
+											}
+											if($cell['TL_FLAG']=='Y'){ ?>
+												<div class="div-tl-simbol">
+													&#9660;			
+												</div>	
+											<?php } ?>
+											<?php if ($cell['CONT_40_LOCATION']==''){ ?> 
+												<?php if ($cell['SEQUENCE']!=''){ ?> 
+													<div class="div-job-seq">
+														<?php 
+															if ($cell['STATUS']=='P') 
+															{
+																echo $cell['SEQUENCE'];
+															} 
+															else 
+															{ 
+																echo "C"; 
+															} 
+
+														?> 
+													</div>
+												<?php } ?> 
+												<?php
+												if($filter == 'SIZE'){
+													echo $cell['CONT_SIZE'];
+												}else if($filter == 'WEIGHT'){
+													echo $cell['WEIGHT'];
+												}else if($filter == 'OPERATOR'){
+													echo $cell['ID_OPERATOR'];
+												}else{
+													echo $cell['ID_COMMODITY'];
+												}  ?>
+											<?php }else{ ?> 40 <?php } ?>
+										</li>
+										<?php
+										if ($cell['STATUS_STACK'] == 'A'){
+											$next_class_tier_ = "ui-stacking-left ";
+										} else {
+											$next_class_tier_ = "";
+										}
+										$index++;
+									}
+									?>
+									<li class="<?=$next_class_tier_?> ui-small-font"><?=str_pad($cell["TIER_"],2,'0',STR_PAD_LEFT)?></li>
+									<?php
+								}
+								?>
+							</ol>
+							<?php
+						}
+						?>
+					</td>
+				</tr>
+				<tr>
+					<?php
+					$odd = false;
+					if( ($bay["JML_ROW"] % 2) == 0){
+						$start = $bay["JML_ROW"];
+					}else{
+						$odd = true;
+						$start = $bay["JML_ROW"] - 1;
+					}
+
+					$n = -2;
+					for($j = 1; $j <= $bay["JML_ROW"]; $j++){
+						?>
+						<td style="padding: 0px; width: <?=$size-$bay["JML_ROW"]?>px;">
+							<center class="ui-small-font"><?=str_pad($start,2,'0',STR_PAD_LEFT)?></center>
+						</td>
+						<?php
+						if (($start + $n) == 0){
+							if ($odd){
+								$start = $start + $n;
+							}else{
+								$n = $n * -1;
+								$start = 1;
+							}
+						}else if (($start + $n) < 0){
+							$n = $n * -1;
+							$start = 1;
+						}else{
+							$start = $start + $n;
+						}
+					}
+					?>
+					<td>
+					</td>
+				</tr>
+			</table>
+		</td>
+		<?php
+	}
+	?>
+	<?php
+	$count_bay++;
+}
+?>
+</tr>
 
 <div class="spacer"></div>
 <table width="130" style="float: left !important;">
@@ -1616,6 +1376,21 @@ $( ".selectable_<?=$tab_id?> .ui-placement-default,.selectable_<?=$tab_id?> .ui-
 	</tr>
 </table>
 
+<table width="230" style="float: left !important;">	
+	<?php
+		foreach ($special_handling as $sh) 
+		{
+			echo '
+			<tr>
+				<td>
+				'.$sh['ID_SPEC_HAND'].'
+				</td>
+				<td>:</td><td>'.$sh['NAME'].'</td>
+			</tr>
+			';
+		}
+	?>
+</table>
 
 </table>
 </div>
@@ -1701,10 +1476,10 @@ Ext.Ajax.request({
 					if(bay_number!='undefined' && bay_number!=''){
 						localStorage['bay_number_'+Ext.getCmp('center_panel').getActiveTab().getId()] = bay_number;
 					}
+					virtual_block_store.reload();
 					if($( "#select-stack_"+Ext.getCmp('west_panel').getActiveTab().getId()).length > 0){
 						$( "#select-stack_"+Ext.getCmp('west_panel').getActiveTab().getId()).html('');
 					}
-					virtual_block_store.reload();
 				}
 			});
 		}else{

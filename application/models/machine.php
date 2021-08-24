@@ -81,7 +81,7 @@ class Machine extends CI_Model {
 								A.ID_MACHINE_ITV 
 							FROM
 								JOB_QUAY_MANAGER A
-								LEFT JOIN CON_LISTCONT B ON  A.NO_CONTAINER = B.NO_CONTAINER AND A.POINT = B.POINT
+								LEFT JOIN CON_LISTCONT B ON A.NO_CONTAINER = B.NO_CONTAINER AND A.POINT = B.POINT
 								LEFT JOIN M_MACHINE M ON A.ID_MACHINE_ITV = M.ID_MACHINE 
 							WHERE
 								A.STATUS_FLAG = 'P' 
@@ -235,58 +235,41 @@ class Machine extends CI_Model {
 		return $data;
 	}
 
-	public function validation_data_itv($id_class_code,$itv)
-	{
-		if($id_class_code == 'I')
-		{
+	public function validation_data_itv($id_class_code,$itv){
+		if($id_class_code == 'I'){
 			$query = "SELECT
 						A.*,
 						C.ID_CLASS_CODE
 					FROM
 						JOB_YARD_MANAGER A
-					INNER JOIN 
-						JOB_QUAY_MANAGER B 
-					ON 
+					INNER JOIN JOB_QUAY_MANAGER B ON
 						A.NO_CONTAINER = B.NO_CONTAINER
-					INNER JOIN 
-						CON_LISTCONT C 
-					ON 
+					INNER JOIN CON_LISTCONT C ON
 						C.NO_CONTAINER = A.NO_CONTAINER
 					WHERE
 						A.ID_MACHINE_ITV = '$itv'
-					AND 
-						A.STATUS_FLAG = 'P'";	
-		}
-		else
-		{
+						AND A.STATUS_FLAG = 'P'";	
+		}else{
 			$query = "SELECT
 					A.*,
 					B.ID_CLASS_CODE
 				FROM
 					JOB_QUAY_MANAGER A
-				LEFT JOIN 
-					CON_LISTCONT B 
-				ON 
-					A.NO_CONTAINER = B.NO_CONTAINER
+				LEFT JOIN CON_LISTCONT B ON A.NO_CONTAINER = B.NO_CONTAINER
 				WHERE
 					ID_MACHINE_ITV = '$itv'
-				AND 
-					STATUS_FLAG = 'P'
+					AND STATUS_FLAG = 'P'
 				ORDER BY
 					SEQUENCE DESC";
 		}
-
 		$response = $this->db->query($query)->num_rows();
 
 		//debux($query);
 
-		if($response>0)
-		{
+		if($response>0){
 			#ada isi
 			return 'full';
-		}
-		else
-		{
+		}else{
 			#kosong
 			return 'empty';
 		}
@@ -380,7 +363,7 @@ class Machine extends CI_Model {
 		$data 		= $rs->row_array();
 		$num_rows 		= $rs->num_rows();
 
-		// debux($query);die();
+		// debux($data['S']);die();
 
 		if($num_rows>0 and strpos($data['S'], '-') !== false)
 		{
@@ -394,20 +377,8 @@ class Machine extends CI_Model {
 		}
 	}
 	
-	public function get_data_machine_yard_quay()
-	{
-		$query 		= "SELECT 
-						ID_MACHINE, MCH_NAME, MCH_TYPE 
-					FROM 
-						M_MACHINE 
-					WHERE 
-						MCH_TYPE IN ('QUAY', 'YARD','ITV') 
-					AND 
-						ID_MACHINE > 0 
-					AND 
-						ID_TERMINAL = '".$this->gtools->terminal()."' 
-					ORDER BY 
-						ID_MACHINE";
+	public function get_data_machine_yard_quay(){
+		$query 		= "SELECT ID_MACHINE, MCH_NAME, MCH_TYPE FROM M_MACHINE WHERE MCH_TYPE IN ('QUAY', 'YARD','ITV') AND ID_MACHINE > 0 AND ID_TERMINAL='".$this->gtools->terminal()."' ORDER BY ID_MACHINE";
 		$rs 		= $this->db->query($query);
 		$data 		= $rs->result_array();
 		
@@ -712,7 +683,7 @@ class Machine extends CI_Model {
 					THEN (SELECT MIN(POINT) FROM JOB_SHIFTING WHERE ID_VES_VOYAGE = C.ID_VES_VOYAGE AND NO_CONTAINER = C.NO_CONTAINER) ELSE 1 END) TOTAL                   
 					FROM DUAL";
 		//echo $query;
-    //   debux($query);die;
+//       debux($query);die;
 		$rs 	= $this->db->query($query);
 		$data 	= $rs->result_array();
 		
@@ -2054,7 +2025,7 @@ class Machine extends CI_Model {
 			}
 		}
 	}
-	
+    
     public function delete_mch($id_machine,$mch_name){
         //cek jika mesin sudah di plan
         $qryCekMesin = "SELECT COUNT(*) TOTAL FROM MCH_PLAN WHERE ID_MACHINE=$id_machine";
@@ -2124,12 +2095,7 @@ class Machine extends CI_Model {
 			FROM M_MACHINE A
 			INNER JOIN JOB_QUAY_MANAGER B
 				ON A.ID_MACHINE = B.ID_MACHINE
-			LEFT JOIN JOB_SUSPEND C 
-				ON A.ID_MACHINE = C.ID_MACHINE  AND B.ID_VES_VOYAGE =C.ID_VES_VOYAGE 
-			LEFT JOIN M_SUSPEND D 
-				ON C.ID_SUSPEND = D.ID_SUSPEND
 			WHERE A.MCH_TYPE = 'QUAY' AND B.ID_VES_VOYAGE = '$id_ves_voyage'
-				AND (D.CATEGORY <> 'NOT' OR D.CATEGORY IS NULL)
 			GROUP BY A.MCH_NAME";
 	//	echo '<pre>'.$qry.'</pre>';exit;
 		return $this->db->query($qry)->result_array();

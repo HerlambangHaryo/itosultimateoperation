@@ -202,12 +202,6 @@
 						id        : 'checkboxcomboweight<?=$tab_id?>'
 					}
 				]
-			},{
-				id: 'port_com<?=$tab_id?>',
-				xtype: 'field',
-				name: "port_com",
-				fieldLabel: 'Port COM',
-				width: 220
 			  },{
 				xtype: 'fieldcontainer',
 
@@ -259,57 +253,20 @@
 					    text: "Calculate",
 					    margin: '0 10 0 0',
 					    handler: function () {
-								if(Ext.getCmp('bruto<?=$tab_id?>').getRawValue()==''){
-									if(Ext.getCmp('port_com<?=$tab_id?>').getRawValue()==''){
-										Ext.getCmp('port_com<?=$tab_id?>').setRawValue('COM12');
-									}
-									loadmask.show();
-									Ext.Ajax.request({
-										url: "<?=controller_?>gate_operation/call_bat/",
-										// url: "<?=controller_?>gate_operation/call_faye/",
-										params: {
-											portcom: Ext.getCmp('port_com<?=$tab_id?>').getRawValue()
-										},
-										success: function(response){
-											loadmask.hide();
-											console.log('responseText',response.responseText);
-											if(response.responseText.includes("porttidakditemukan")===true){
-												alert('Port Tidak ditemukan');
-											}else{
-												// var wgtBruto = Ext.getCmp('bruto<?=$tab_id?>').getRawValue();
-												if(response.responseText!='' && response.responseText.includes("---inidataTimbangan---")===true){
-													var wgtBruto = response.responseText.split('---inidataTimbangan---')[1];
-													Ext.getCmp('bruto<?=$tab_id?>').setRawValue(wgtBruto);
-													var wgtAxle = Ext.getCmp('axle<?=$tab_id?>').getRawValue();
-													var cc = Ext.getCmp('checkboxcomboweight<?=$tab_id?>').getRawValue();
-													var wgtNetto = wgtBruto-wgtAxle;	
-													if(cc==true){
-														wgtNetto=wgtNetto/2;
-													}
-													if(wgtNetto < 0){
-														alert('Weight netto cannot less than 0. Please check again.');
-													}
-													Ext.getCmp('netto<?=$tab_id?>').setRawValue(wgtNetto);
-												}else{
-													alert('Error Get data Timbangan');
-												}
-											}
-										}
-									});
-								}else{
-									var wgtBruto = Ext.getCmp('bruto<?=$tab_id?>').getRawValue();
-									var wgtAxle = Ext.getCmp('axle<?=$tab_id?>').getRawValue();
-									var cc = Ext.getCmp('checkboxcomboweight<?=$tab_id?>').getRawValue();
-									var wgtNetto = wgtBruto-wgtAxle;	
-									if(cc==true){
-										wgtNetto=wgtNetto/2;
-									}
-									if(wgtNetto < 0){
-										alert('Weight netto cannot less than 0. Please check again.');
-									}
-									Ext.getCmp('netto<?=$tab_id?>').setRawValue(wgtNetto);
+											    //alert('test');
+							    var wgtBruto = Ext.getCmp('bruto<?=$tab_id?>').getRawValue();
+							    var wgtAxle = Ext.getCmp('axle<?=$tab_id?>').getRawValue();
+								var cc = Ext.getCmp('checkboxcomboweight<?=$tab_id?>').getRawValue();
+							    var wgtNetto = wgtBruto-wgtAxle;
+								if(cc==true){
+									wgtNetto=wgtNetto/2;
 								}
-							}
+//                                                            alert('length : ' +wgtBruto.length);
+                                                            if(wgtNetto < 0){
+                                                                alert('Weight netto cannot less than 0. Please check again.');
+                                                            }
+                                                            Ext.getCmp('netto<?=$tab_id?>').setRawValue(wgtNetto);
+                                            }
 				    }]
 			  },{
 				xtype: 'hiddenfield',
@@ -503,10 +460,14 @@
 								success: function(form, action) {
 									loadmask.hide();
 									//Ext.Msg.alert('Found', action.result.errors);
+
+//									console.log(action.result.errors);
+									
 									var data = JSON.parse(action.result.data);
 									var form2=Ext.getCmp('container_search_form_<?=$tab_id?>').getForm();
 									var recdel=form2.findField("typeRecDel").getValue();//typeRecDel
 									var tpinOutGate=form2.findField("typeInOut").getValue();//typeRecDelconsole.log('data');
+//									console.log(data);
 									Ext.getCmp('container_data_form_<?=$tab_id?>').getForm().reset();
 									Ext.getCmp('container_data_form_<?=$tab_id?>').getForm().setValues(data);
 									Ext.getCmp('axle<?=$tab_id?>').setRawValue(data.AXLE);
@@ -520,9 +481,6 @@
 									    Ext.getCmp('buttonAxle<?=$tab_id?>').setDisabled(true);
 									    console.log('masuk else');
 //									    Ext.getCmp('bruto<?=$tab_id?>').getEl().dom.setAttribute('readOnly', true);
-									}
-									if(Ext.getCmp('container_data_form_<?=$tab_id?>').getForm().findField('port_com<?=$tab_id?>').getRawValue()==''){
-										Ext.getCmp('container_data_form_<?=$tab_id?>').getForm().findField('port_com<?=$tab_id?>').setRawValue('COM12');
 									}
 								},
 								failure: function(form, action) {

@@ -65,7 +65,7 @@
 			 {GATE: 'Gate Out', GATE_TEXT: 'Gate Out'}
 		]
 	});
-	
+
 	var tampil_store = Ext.create('Ext.data.Store', {
 			fields:[
 				'COMPANY_NAME',
