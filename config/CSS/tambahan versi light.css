@@ -1,0 +1,38 @@
+<style>
+#component-1013{
+	background-color: #ddebf9;
+}
+#west_panel-splitter{
+	background: linear-gradient(to bottom, #ddebf9 , #f4f9fd);
+}
+#east_panel-splitter{
+	background: linear-gradient(to bottom, #ddebf9 , #f4f9fd);
+}
+#tabbar-1014-innerCt{
+	background: linear-gradient(to top, #ddebf9 , #f4f9fd);
+}
+#tabbar-1017{
+	background: linear-gradient(to top, #ddebf9 , #f4f9fd);
+}
+#tabbar-1014-body{
+	background-color: #ddebf9;
+}
+#tabbar-1017-strip{
+	background-color: #ddebf9;
+}
+#tabbar-1016-strip{
+	background-color: #ddebf9;
+}
+#tabbar-1016-innerCt{
+	background: linear-gradient(to top, #ddebf9 , #f4f9fd);
+}
+#tabbar-1016{
+	background: linear-gradient(to top, #ddebf9 , #f4f9fd);
+}
+#east_panel-body{
+	background: linear-gradient(to top, #ddebf9 , #f4f9fd);
+}
+#tabbar-1016-body{
+	background-color: #ddebf9;
+}
+</style>
